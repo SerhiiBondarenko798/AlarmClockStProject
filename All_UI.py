@@ -8,7 +8,6 @@ from kivy.uix.widget import Widget
 from kivy.uix.bubble import Bubble
 from kivy.uix.image import Image
 from kivy.graphics import (Color, Ellipse, Rectangle, Line)
-from kivy.config import Config
 Config.set('graphics', 'width', 400)
 Config.set('graphics', 'height', 700)
 Config.set('graphics', 'resizable', 0)
@@ -118,13 +117,13 @@ class AlarmClockApp(App):
     	return MainAppWindow
     def GoTOTimer_widget(self,touch):#<-----------------Место для функции перехода на таймер виджет
     	return print('Time to timer')
-    def GoTOStopclock_widget(self,touch)::#<-----------------Место для функции перехода на стопклок виджет
+    def GoTOStopclock_widget(self,touch):#<-----------------Место для функции перехода на стопклок виджет
     	return print('Time to stopclock')
-    def GoTOAlarm_widget(self,touch)::#<-----------------Место для функции перехода на аларм виджет
+    def GoTOAlarm_widget(self,touch):#<-----------------Место для функции перехода на аларм виджет
     	return print('Time to alarmclock')
-    def GoTOCust_widget(self,touch)::#<-----------------Место для функции перехода на каст виджет
+    def GoTOCust_widget(self,touch):#<-----------------Место для функции перехода на каст виджет
     	return print('Time to customise')
-    def GoTOSettings_widget(self,touch)::#<-----------------Место для функции перехода на сетингс виджет
+    def GoTOSettings_widget(self,touch):#<-----------------Место для функции перехода на сетингс виджет
     	return print('Time to setings')
    
 
