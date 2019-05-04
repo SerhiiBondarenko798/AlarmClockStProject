@@ -9,8 +9,9 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.widget import Widget
 from kivy.uix.bubble import Bubble
+from kivy.uix.screenmanager import ScreenManager, Screen,WipeTransition,SlideTransition
 from kivy.uix.image import Image
-from kivy.graphics import (Color, Ellipse, Rectangle, Line)
+from kivy.graphics import (Color, Ellipse, Rectangle, Line,BorderImage)
 from kivy.uix.recycleview import RecycleView
 from kivy.uix.splitter import Splitter
 from kivy.uix.recycleview.views import RecycleDataViewBehavior
@@ -18,10 +19,30 @@ from kivy.properties import BooleanProperty
 from kivy.uix.recycleboxlayout import RecycleBoxLayout
 from kivy.uix.behaviors import FocusBehavior
 from kivy.uix.recycleview.layout import LayoutSelectionBehavior
+import time
+from Time import Time 
 Builder.load_string('''
-<SelectableLabel>:
+<TimerClockLab>:
+    font_size: 50
+    color: (0, 1, 1, 1)
+    canvas.before:
+        
+        Color: 
+            rgba:(0, 1, 1, 1)#<-----------------Место для функции смены цвета бэка тамербара
+        Line:
+            circle: (self.center_x,self.center_y,100)
+            width: 1.5
 
+<SetTimeTM_body>: 
+    size_hint: (.8,.8)
+        
+<Act_Time_Screen>:
+    TimerClock_Body:       
+
+<SelectableLabel>:
     
+    font_size: 50
+    color: (.1,.1,.1,1) if self.selected else (0,1,1,1)
     canvas.before:
         Color:
             rgba: (0,1,1,1) if self.selected else (0, 0, 0, 0)
@@ -68,9 +89,7 @@ class SelectableLabel(RecycleDataViewBehavior, Label):
         self.selected = is_selected
         if is_selected:
             dic=rv.data[index]
-            print(dic['text'])
-        # else:
-        #     print("selection removed for {0}".format(rv.data[index]))
+            print(self. index)        
 
 
 class RV(RecycleView):
@@ -78,38 +97,60 @@ class RV(RecycleView):
         super(RV, self).__init__(**kwargs)
         self.data = [{'text': str(x)} for x in range(60)]
 
-# class Timerclock_body(BoxLayout):
-
-#     def __init__(self, **kwargs):
-#         super(Timerclock_body, self).__init__(**kwargs)
-#         #self.get_time_time=get_time_time='00:00'
-#         with self.canvas.before:
-#             Color(0, 1, 1, 1)#<-----------------Место для функции смены цвета бэка тамербара
-#             Line(circle=(200,375,70),width=1.5 )
-#             Label(text=self.get_time_time,font_size=30,color=(0, 1, 1, 1),pos=(150,325))
-#     # def get_time_to_timer(self):
-#     #     get_time_time=Clock.schelude_interval(,0.5)
+        
 
 
 
 
 
+class TimerClockLab(Label):
+   def __init__(self, **kwargs):
+        super(TimerClockLab, self).__init__(**kwargs)
+        
+
+        
+
+class TimerClock_Body(BoxLayout):
+
+    def __init__(self, **kwargs):
+        super(TimerClock_Body, self).__init__(**kwargs)
+        self.get_time_time=get_time_time='00:00'
+        self.TM_TC_Label=TM_TC_Label=TimerClockLab(text='00:00',pos_hint={'center_x':0.5,'center_y':0.5})
+        self.add_widget(TM_TC_Label)
+        # with self.canvas.before:
+        #     Color(0, 1, 1, 1)#<-----------------Место для функции смены цвета бэка тамербара
+        #     self.line=Line(circle=(self.center_x,self.center_y,70),width=1.5)
+    
 class SetTimeTM_body(BoxLayout):
 
     def __init__(self, **kwargs):
         super(SetTimeTM_body, self).__init__(**kwargs)
-        self.scroll_mint=scroll_mint=RV()
-        self.scroll_sec=scroll_sec=RV()
+        self.scroll_mint=scroll_mint=RV(pos_hint={'x': 0.0, 'top': 1})
+        self.scroll_sec=scroll_sec=RV(pos_hint={'right': 1.0, 'top': 1})
         self.add_widget(scroll_mint)
         self.add_widget(scroll_sec)
+        print(scroll_mint.ids)
         with self.canvas.before:
             Color(0, 1, 1, 1)#<-----------------Место для функции смены цвета бэка тамербара
-            # Line(circle=(200,375,70),width=1.5 )
-            #Label(text='tut dolzgna bit funciya',font_size=30,color=(0, 1, 1, 1),pos=(150,325))
 
+        
+class TM_SM(ScreenManager):
 
+    def __init__(self, **kwargs):
+        super(TM_SM, self).__init__(**kwargs)
+        self.snovadarou=snovadarou=Set_Time_Screen()
+        self.add_widget(snovadarou)
+        
 
+class Set_Time_Screen(Screen):
+    def __init__(self, **kwargs):
+        super(Set_Time_Screen, self).__init__(**kwargs)
+        self.darou=darou=SetTimeTM_body()
+        self.add_widget(darou)
 
+class Act_Time_Screen(Screen):
+    def __init__(self, **kwargs):
+        super(Act_Time_Screen, self).__init__(**kwargs)
 
 class TimerLables(AnchorLayout):
     def __init__(self, **kwargs):
@@ -142,38 +183,62 @@ class TimerLables(AnchorLayout):
             self.bind(size=self._update_rect, pos=self._update_rect)
 
 
+
+class MainApp(App):
+    def LetsGetStartTimer(self,touch):
+        
+        if self.SM_TM.has_screen('ATS'):
+            self.SM_TM.current='ATS'   
+        else :
+            self.SM_TM.switch_to(self.screens[1],direction='right')
+            print(self.SM_TM.children)
+            print(self.SM_TM.ids)
+        print(self.SM_TM.children)
+    def LetsGetStopTimer(self,touch):
+
+        if self.SM_TM.has_screen('STS'):
+            self.SM_TM.current='STS'    
+        else :
+            self.SM_TM.switch_to(self.screens[0],direction='left')
+            print(self.SM_TM.children)
+        print(self.SM_TM.children)
+
+    def build(self):
+
+        Timer_Body=FloatLayout()
+        self.SM_TM = SM_TM  =ScreenManager(size_hint=[1,.8],pos_hint={'center_x':0.5,'y':.3})
+        self.frst=frst=Set_Time_Screen(name='STS')
+        self.scnd=scnd=Act_Time_Screen(name='ATS')
+        self.SM_TM.add_widget(frst)
+        self.screens=[frst,scnd]    
         
 
 
 
-class MainApp(App):
-    def LetsGetStartTimer(self):
-        print()
-
-    def build(self):
-
-
-
-        Timer_Body=FloatLayout()
-        #TimerBody.add_widget(Button(text='hello',font_size=5,size=(50,50),background_color=(1,0,0,1)))
-        self.root = root = SetTimeTM_body(size_hint=[.8,.9],pos_hint={'center_x':0.5,'y':.1}, padding=[40,10,40,10])
-        Timer_Body.add_widget(root)
-
-        Button_Start= TimerLables(size_hint=[1/6,1],pos_hint={'x': 0.1, 'y': 0})
+        Button_Start= TimerLables(size_hint=[1/5.5,1],pos_hint={'x': 0.1, 'y': 0})
         Button_Start.img1.source='icons8-circled-play-filled-90.png'
-        #Button_Start.btn1.bind(on_release=self.LetsGetStartTimer)
+        Button_Start.btn1.bind(on_release=self.LetsGetStartTimer)
 
-        Button_Pause= TimerLables(size_hint=[1/6,1],pos_hint={'center_x': .5, 'y': 0})
+        Button_Pause= TimerLables(size_hint=[1/5.5,1],pos_hint={'center_x': .5, 'y': 0})
         Button_Pause.img1.source='icons8-pause-button-filled-96.png'
         #Button_Pause.btn1.bind(on_release=self.GoTOTimer_widget)
 
-        Button_Stop= TimerLables(size_hint=[1/6,1],pos_hint={'right': 0.9, 'y': 0})
+        Button_Stop= TimerLables(size_hint=[1/5.5,1],pos_hint={'right': 0.9, 'y': 0})
         Button_Stop.img1.source='icons8-no-96.png'
-        #Button_Stop.btn1.bind(on_release=self.GoTOTimer_widget)
-        Timer_ToolBar=FloatLayout(size_hint=(1,.1))
+        Button_Stop.btn1.bind(on_release=self.LetsGetStopTimer)
+
+
+
+        Timer_ToolBar=FloatLayout(size_hint=(.9,.1),pos_hint={'center_x':0.5,'y':.1})
         Timer_ToolBar.add_widget(Button_Start)
         Timer_ToolBar.add_widget(Button_Pause)
         Timer_ToolBar.add_widget(Button_Stop)
+
+
+
+
+
+        Timer_Body.add_widget(SM_TM)
         Timer_Body.add_widget(Timer_ToolBar)
         #TimerBody.add_widget(Button(text='hello',font_size=5,size=(50,50),background_color=(1,0,0,1)))
         return Timer_Body
