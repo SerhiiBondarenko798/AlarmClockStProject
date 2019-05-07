@@ -177,7 +177,7 @@ class TimerClock_Body(BoxLayout):
     def __init__(self, **kwargs):
         super(TimerClock_Body, self).__init__(**kwargs)
         self.get_time_time=get_time_time='00:00'
-        self.TM_TC_Label=TM_TC_Label=TimerClockLab(text='00:00',pos_hint={'center_x':0.5,'center_y':0.5})
+        self.TM_TC_Label=TM_TC_Label=TimerClockLab(text=get_time_time,pos_hint={'center_x':0.5,'center_y':0.5})
         self.add_widget(TM_TC_Label)
         # with self.canvas.before:
         #     Color(0, 1, 1, 1)#<-----------------Место для функции смены цвета бэка тамербара
