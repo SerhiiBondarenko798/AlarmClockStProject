@@ -1,5 +1,6 @@
 import time
-from Time import Time 	
+from Time import Time
+	
 class Timer(Time):
 	
 
@@ -7,23 +8,20 @@ class Timer(Time):
 		print(minutes)
 		print(seconds)
 		x= minutes*60 + seconds
-		print (x)
 		
 		self.timertime = x+self.getTime()
+		# print(self.timertime)
 
+	def CheckTimeTM (self, count):
+		self.count=self.timertime - time.time()			
+		print("%.10f" % self.count)
+		time.sleep(1)
 
-	def CheckTimeTM (self,y):
-		while True:
-			count=self.timertime - time.time()
-			# print("%.10f" % count)
-			# time.sleep(1)
-			if  (count <= 0):
-				
-				break
-			elif (self.status):
-				break
+		if self.count<=0:
+			return False
+		return self.CheckTimeTM(self.count)
 
-		return self.doAlarmTM()
+		
 
 
 	def doAlarmTM(self):
@@ -33,8 +31,10 @@ class Timer(Time):
 
 
 	def TimerTM(self):
-		self.CheckTimeTM(self.timertime)
+		self.CheckTimeTM()
 	def StopTM(self,fuckoff):
 		self.status = fuckoff
 
 
+	def giveTime(self, gived_value):
+		pass

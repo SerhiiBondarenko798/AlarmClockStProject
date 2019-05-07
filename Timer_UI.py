@@ -38,8 +38,6 @@ Builder.load_string('''
 <SetTimeTM_body>: 
     size_hint: (.8,.8)
         
-<Act_Time_Screen>:
-    TimerClock_Body:       
 
 <SelectableLabel>:
     
@@ -183,6 +181,7 @@ class TimerClock_Body(BoxLayout):
         #     Color(0, 1, 1, 1)#<-----------------Место для функции смены цвета бэка тамербара
         #     self.line=Line(circle=(self.center_x,self.center_y,70),width=1.5)
     
+    
 class SetTimeTM_body(BoxLayout):
 
     def __init__(self, **kwargs):
@@ -213,6 +212,8 @@ class Set_Time_Screen(Screen):
 class Act_Time_Screen(Screen):
     def __init__(self, **kwargs):
         super(Act_Time_Screen, self).__init__(**kwargs)
+        self.TMWindow=TMWindow=TimerClock_Body()
+        self.add_widget(TMWindow)
 
 class TimerLables(AnchorLayout):
     def __init__(self, **kwargs):
@@ -246,19 +247,16 @@ class TimerLables(AnchorLayout):
 
 
 
-class MainApp(App):
-    
-        
-
-	def build(self):
-
+class Timer_widget(FloatLayout):
+	def __init__(self, **kwargs):
+		super(Timer_widget, self).__init__(**kwargs)
 		Timer_Body=FloatLayout()
 		self.SM_TM = SM_TM  =ScreenManager(size_hint=[1,.8],pos_hint={'center_x':0.5,'y':.3})
 		self.frst=frst=Set_Time_Screen(name='STS')
 		self.scnd=scnd=Act_Time_Screen(name='ATS')
 		self.SM_TM.add_widget(frst)
 		self.screens=[frst,scnd]    
-       
+		self.ticking=0
 		self.TimerSession= TimerSession = Timer()
 
 		Button_Start= TimerLables(size_hint=[1/5.5,1],pos_hint={'x': 0.1, 'y': 0})
@@ -267,7 +265,7 @@ class MainApp(App):
 
 		Button_Pause= TimerLables(size_hint=[1/5.5,1],pos_hint={'center_x': .5, 'y': 0})
 		Button_Pause.img1.source='icons8-pause-button-filled-96.png'
-        #Button_Pause.btn1.bind(on_release=self.GoTOTimer_widget)
+		Button_Pause.btn1.bind(on_release=self.LetsGetPauseTimer)
 
 		Button_Stop= TimerLables(size_hint=[1/5.5,1],pos_hint={'right': 0.9, 'y': 0})
 		Button_Stop.img1.source='icons8-no-96.png'
@@ -285,26 +283,44 @@ class MainApp(App):
 
 		Timer_Body.add_widget(SM_TM)
 		Timer_Body.add_widget(Timer_ToolBar)
-        #TimerBody.add_widget(Button(text='hello',font_size=5,size=(50,50),background_color=(1,0,0,1)))
-		return Timer_Body
-	def LetsGetStartTimer(self,touch):
+		self.add_widget(Timer_Body)
         
-        # if self.SM_TM.has_screen('ATS'):
-        #     self.SM_TM.current='ATS'   
-        # else :
-		self.SM_TM.switch_to(self.screens[1],direction='right')
-		print(self.SM_TM.children)
+
+		
+	def LetsGetStartTimer(self,touch):
 		mins = float(keke.fefe)
 		secs = float(keke1.fefe1)
 		self.TimerSession.setTimer(mins,secs)
-		self.TimerSession.TimerTM()
+		# self.TimerSession.TimerTM()
 
+		# if (self.TimerSession.count<=0):
+		# 	Clock.unschedule(self.ticking)
+		# 	self.TimerSession.doAlarmTM
+		self.ticking=Clock.schedule_interval(self.TimerSession.CheckTimeTM(self.TimerSession.count), 1)
+		self.ticking()
+		self.scnd.TMWindow.get_time_time= str(self.TimerSession.count)
+
+		self.SM_TM.switch_to(self.screens[1],direction='right')
+		print(self.SM_TM.children)
+		
+
+	def  LetsGetPauseTimer(self,touch):
+		Clock.unschedule(self.ticking)
         	
 	def LetsGetStopTimer(self,touch):
 
        	
 		self.SM_TM.switch_to(self.screens[0],direction='left')
-		TimerSession.StopTM(True)
+		self.TimerSession.StopTM(True)
+
+
+
+class MainApp(App):
+	def build(self):
+		return Timer_widget()
+
+
+
 
 keke=azaza()
 keke1=azaza1()
