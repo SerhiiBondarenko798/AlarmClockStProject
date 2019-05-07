@@ -296,13 +296,14 @@ class Timer_widget(FloatLayout):
 		# if (self.TimerSession.count<=0):
 		# 	Clock.unschedule(self.ticking)
 		# 	self.TimerSession.doAlarmTM
+        
 		self.ticking=Clock.schedule_interval(self.TimerSession.CheckTimeTM(self.TimerSession.count), 1)
-		self.ticking()
+		# self.ticking()
 		self.scnd.TMWindow.get_time_time= str(self.TimerSession.count)
 
 		self.SM_TM.switch_to(self.screens[1],direction='right')
 		print(self.SM_TM.children)
-		
+	
 
 	def  LetsGetPauseTimer(self,touch):
 		Clock.unschedule(self.ticking)
