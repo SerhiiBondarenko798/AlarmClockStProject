@@ -13,16 +13,19 @@ class Timer(Time):
 		# print(self.timertime)
 
 	def CheckTimeTM (self, count):
-		self.count=self.timertime - time.time()			
-		print("%.10f" % self.count)
-		time.sleep(1)
 
+		self.count=self.timertime - time.time()	
 		if self.count<=0:
-			return False
+			print(0)
+			return self.giveTime
+		print("%.5f" % self.count)
+		time.sleep(0.1)
+
+
 		return self.CheckTimeTM(self.count)
 
-		
 
+	
 
 	def doAlarmTM(self):
 		print ("Ale, camon, ya tut zvenu")

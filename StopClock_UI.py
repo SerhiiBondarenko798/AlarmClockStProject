@@ -21,99 +21,79 @@ Config.set('graphics', 'width', 400)
 Config.set('graphics', 'height', 700)
 Config.set('graphics', 'resizable', 0)
 
-class EllipseClock(Widget):
+class Clocker(Label):
+	"""docstring for Clocker"""
 	def __init__(self, **kwargs):
-		super(EllipseClock, self).__init__(**kwargs)
-		
-	# def updateTime(self, *args):
-		
-		# self.dady = str(time.clock())
+		super(Clocker, self).__init__(**kwargs)
 		with self.canvas.before:
-			Color(1,0,0,1)
-			
-			Ellipse(circle=(200, 300, 70),pos=(150,350),color=(0,0,0,1), width = 1.5, index = -1)
-			
-		
-# 		# self.dady = str(time.clock())
-# 		
-		# with self.canvas:
-		# 	Line(circle=(200, 300, 70), color = (0,1,0,1), width = 1.5, pos=(100,400))
-
-	 
-	# def start_tw(self, touch):
-	# 	return StopClock().startSC()
-
-
-
-
-
-class Tab(Label):
-	def updateTime(self, *args):
-		self.dady = str(StopClock().startSC())
-		with self.canvas:
 			Color(0,1,0,1)
-			Label(text = self.dady, pos=(100, 330))
+			Line(circle= (200, 350, 60), width = 1.5)
+
+
+class BigRoundDickovina(FloatLayout):
+	def __init__(self, **kwargs):
+		super(BigRoundDickovina, self).__init__(**kwargs)
+		pis = Clocker(text='00:00', pos_hint={'center_x':.5, 'center_y':.5})
+		self.add_widget(pis)
+		
+      
+
+		
+
+
+class SC_Lables(AnchorLayout):
+    def __init__(self, **kwargs):
+        super(SC_Lables, self).__init__(**kwargs)
+        self.img1=img1=Image(size_hint=(.5,.5), color = (0,1,1,1),mipmap=1)#<-----------------Место для функции смены пассивного цвета кнопки
+        self.btn1 = btn1 =Button(background_color=(0,0,0,0))
+        self.add_widget(img1,index=-1)
+        self.add_widget(self.btn1)
+        btn1.bind(on_press=self.ButtonON, on_release=self.ButtonOFF)
+        with self.canvas.before:
+            Color(.1, .1, .1, 1)#<-----------------Место для функции смены цвета бэка тулбара в пасивном состоянии
+            self.rect = Ellipse(size=self.size, pos=self.pos)
+            self.bind(size=self._update_rect, pos=self._update_rect)
+    def _update_rect(self, instance, value):
+        self.rect.pos = instance.pos
+        self.rect.size = instance.size
+
+    def ButtonON(self,touch):
+        self.img1.color =(0,0,0,1)#<-----------------Место для функции смены активного цвета кнопки
+        with self.canvas.before:
+            Color(0, 1, 1, 1)#<-----------------Место для функции смены цвета бэка тулбара в активном состоянии
+            self.rect = Ellipse(size=self.size, pos=self.pos)
+            self.bind(size=self._update_rect, pos=self._update_rect)
+
+    def ButtonOFF(self,touch):
+        self.img1.color =(0,1,1,1)#<-----------------Место для функции смены пассивного цвета кнопки
+        with self.canvas.before:
+            Color(.1, .1, .1, 1)#<-----------------Место для функции смены цвета бэка тулбара в пасивном состоянии
+            self.rect = Ellipse(size=self.size, pos=self.pos)
+            self.bind(size=self._update_rect, pos=self._update_rect)
+
+
+class StopClockWidget(FloatLayout):
+	def __init__(self, **kwargs):
+		super(StopClockWidget, self).__init__(**kwargs)
+
+		self.play = play = SC_Lables(size_hint=(.15,.1), pos_hint={'x':0, 'y':0})
+		# play.btn1.bind(on_release = pass)
+		play.img1.source = "icons8-circled-play-filled-90.png"
+		self.pause = pause = SC_Lables(size_hint=(.15,.1), pos_hint={'x':.2, 'y':0})
+
+		pause.img1.source = "icons8-pause-button-filled-96.png"
+		self.circle = circle = BigRoundDickovina(pos_hint={'center_x':.5, 'center_y':.5})
+		self.add_widget(play)
+		self.add_widget(pause)
+		self.add_widget(circle)
+
 	
 
-class StopClock_UI(App, StopClock):
+
+class MainApp(App):
 	def build(self):
-
-		pisos = StopClock()
-		
-
-		
-		me = Widget()
-		me.add_widget(EllipseClock())
-		
-		
-		
-		
-        
+		return StopClockWidget()
 
 
-		startSC_widget = Widget()
-		startSC_button = Button(pos = (30,350), border = (2,2,2,2))
-		startSC_button.bind(on_release = self.start)
-		startSC_widget.add_widget(startSC_button)
-		startSC_widget.add_widget(Image(source='Icons/stopclock_timer/icons8-circled-play-filled-90.png', size_hint=(.5,.5), pos=startSC_button.pos, color = (0, 1, 0, 1), mipmap=1), index =-1)
-		
-		pauseSC_widget = Widget()
-		
-		pauseSC_image = Image(source='Icons/stopclock_timer/icons8-pause-button-filled-96.png', size_hint=(.5,.5), pos= (270, 350) ,color = (0, 1, 0, 1), mipmap=1)
-		pauseSC_button = Button(pos = pauseSC_image.pos, size_hint = pauseSC_image.size)
-		pauseSC_button.bind(on_press = self.pause)
-		pauseSC_widget.add_widget(pauseSC_button)
-		pauseSC_widget.add_widget(pauseSC_image, index =-1)
-		
-		# 
-		# Clock.schedule_interval(t.updateTime, 1)
-		
-		# me.add_widget(t(pos=(100,100)))
-
-
-
-		me.add_widget(startSC_widget)
-		me.add_widget(pauseSC_widget)
-
-		return me
-
-	
-
-	def start(self, touch):
-		t = Tab()
-		Clock.schedule_interval(t.updateTime, 0.1)
-		return t
-		
-		# Clock.schedule_interval(StopClock().startSC(), 1)
-
-	
-		
-		 
-		
-
-	def pause(self, touch):
-		return StopClock().pauseSC()
-
-
-StopClock_UI().run()
-	
+if __name__ == '__main__':
+    MainApp().run()
