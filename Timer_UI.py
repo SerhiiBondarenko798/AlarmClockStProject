@@ -20,6 +20,8 @@ from kivy.properties import BooleanProperty
 from kivy.uix.recycleboxlayout import RecycleBoxLayout
 from kivy.uix.behaviors import FocusBehavior
 from kivy.uix.recycleview.layout import LayoutSelectionBehavior
+from abc import ABCMeta, abstractmethod, abstractproperty, ABC
+from abstract_classes import I_input_getTime, I_Button
 import time
 from Time import Time 
 from Timer import Timer
@@ -108,8 +110,8 @@ class SelectableLabel(RecycleDataViewBehavior, Label):
         self.selected = is_selected
         if is_selected:
             dic=rv.data[index]
-            keke.geted(self.index)
-            # azaza().geted(dic['text'])
+            Geted_minutes.geted(self.index)
+            # input_getTime().geted(dic['text'])
             # print(dic['text'])
 class RV(RecycleView):
     def __init__(self, **kwargs):
@@ -136,8 +138,8 @@ class SelectableLabel1(RecycleDataViewBehavior, Label):
         self.selected = is_selected
         if is_selected:
             dic=rv.data[index]
-            keke1.geted1(self.index)
-            # azaza1().geted1(dic['text'])
+            Geted_seconds.geted(self.index)
+            # input_getTime1().geted1(dic['text'])
             # print('Smotry tut vso rabotaet {0}'.format(dic['text']))
 class RV1(RecycleView):
     def __init__(self, **kwargs):
@@ -146,18 +148,21 @@ class RV1(RecycleView):
 
         
 
-class azaza:
+
+
+
+class input_getTime(I_input_getTime):
 	def __init__(self, **kwargs):
-		self.fefe='0'
+		self.time_item='0'
 	def geted(self, value):
-		self.fefe = value
-		return self.fefe
-class azaza1:
-	def __init__(self, **kwargs):
-		self.fefe1='0'
-	def geted1(self, value):
-		self.fefe1 = value
-		return self.fefe1
+		self.time_item = value
+		return self.time_item
+# class input_getTime1(I_input_getTime):
+# 	def __init__(self, **kwargs):
+# 		self.time_item1='0'
+# 	def geted(self, value):
+# 		self.time_item1 = value
+# 		return self.time_item1
 		
 		
 
@@ -247,7 +252,10 @@ class TimerLables(AnchorLayout):
 
 
 
-class Timer_widget(FloatLayout):
+		
+
+
+class Timer_widget(FloatLayout,I_Button):
 	def __init__(self, **kwargs):
 		super(Timer_widget, self).__init__(**kwargs)
 		Timer_Body=FloatLayout()
@@ -261,15 +269,15 @@ class Timer_widget(FloatLayout):
 
 		Button_Start= TimerLables(size_hint=[1/5.5,1],pos_hint={'x': 0.1, 'y': 0})
 		Button_Start.img1.source='icons8-circled-play-filled-90.png'
-		Button_Start.btn1.bind(on_release=self.LetsGetStartTimer)
+		Button_Start.btn1.bind(on_release=self.LetsGetStart)
 
 		Button_Pause= TimerLables(size_hint=[1/5.5,1],pos_hint={'center_x': .5, 'y': 0})
 		Button_Pause.img1.source='icons8-pause-button-filled-96.png'
-		Button_Pause.btn1.bind(on_release=self.LetsGetPauseTimer)
+		Button_Pause.btn1.bind(on_release=self.LetsGetPause)
 
 		Button_Stop= TimerLables(size_hint=[1/5.5,1],pos_hint={'right': 0.9, 'y': 0})
 		Button_Stop.img1.source='icons8-no-96.png'
-		Button_Stop.btn1.bind(on_release=self.LetsGetStopTimer)
+		Button_Stop.btn1.bind(on_release=self.LetsGetStop)
 
 
 
@@ -287,10 +295,10 @@ class Timer_widget(FloatLayout):
         
 
 		
-	def LetsGetStartTimer(self,touch):
+	def LetsGetStart(self,touch):
 		self.SM_TM.switch_to(self.screens[1],direction='right')
-		mins = float(keke.fefe)
-		secs = float(keke1.fefe1)
+		mins = float(Geted_minutes.time_item)
+		secs = float(Geted_seconds.time_item)
 		self.TimerSession.setTimer(mins,secs)
 		# self.TimerSession.TimerTM()
 
@@ -307,10 +315,10 @@ class Timer_widget(FloatLayout):
 		
 		
 
-	def  LetsGetPauseTimer(self,touch):
+	def  LetsGetPause(self,touch):
 		Clock.unschedule(self.ticking)
         	
-	def LetsGetStopTimer(self,touch):
+	def LetsGetStop(self,touch):
 
        	
 		self.SM_TM.switch_to(self.screens[0],direction='left')
@@ -325,8 +333,8 @@ class MainApp(App):
 
 
 
-keke=azaza()
-keke1=azaza1()
+Geted_minutes=input_getTime()
+Geted_seconds=input_getTime()
 
 if __name__ == '__main__':
     MainApp().run()

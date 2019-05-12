@@ -35,8 +35,8 @@ class Timer(Time):
 
 	def TimerTM(self):
 		self.CheckTimeTM()
-	def StopTM(self,fuckoff):
-		self.status = fuckoff
+	def StopTM(self,value):
+		self.status = value
 
 
 	def giveTime(self, gived_value):

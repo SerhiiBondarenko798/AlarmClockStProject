@@ -1,6 +1,21 @@
 import time
+from abc import ABCMeta, abstractmethod, abstractproperty
 
-class Time:
+class Itime:
+	# def __init__(self,systime,sysdate,count,status):
+	# 	self.systime = systime
+	# 	self.sysdate = sysdate
+	# 	self.count= count
+	# 	self.status= status
+	def getTime(self):
+		pass
+
+	def getDate(self):
+		pass
+
+
+
+class Time(Itime):
 	
 	def __init__(self):
 		self.systime = time.time()
