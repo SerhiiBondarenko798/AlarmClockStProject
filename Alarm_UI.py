@@ -24,11 +24,6 @@ from kivy.uix.recycleview.layout import LayoutSelectionBehavior
 from abc import ABCMeta, abstractmethod, abstractproperty, ABC
 from abstract_classes import I_input_getTime, I_Button
 from kivy.uix.popup import Popup
-from kivy.factory import Factory
-from kivy.animation import Animation
-from kivy.clock import Clock, mainthread
-from kivy.uix.gridlayout import GridLayout
-import threading
 import time
 import types
 from Time import Time 
@@ -97,30 +92,18 @@ class SelectableLabel(RecycleDataViewBehavior, Label):
             return True
         if self.collide_point(*touch.pos) and self.selectable:
             return self.parent.select_with_touch(self.index, touch)
-        if self.selected:
-            self.selected=False
     def apply_selection(self, rv, index, is_selected):
         self.selected = is_selected
         if is_selected:
-            dicvalue=rv.data[index]['text']
-            if self.parent.parent.id == 'minuteslist':
-                self.parent.parent.parent.parent.parent.parent.parent.valueminutes=dicvalue
-            elif self.parent.parent.id == 'secondslist':
-                self.parent.parent.parent.parent.parent.parent.parent.valueseconds=dicvalue
-            is_selected=False
-    
+            dic=rv.data[index]
+            dic['keyforacc'] = 'ya'
+            # print (dic)
            
 class RV(RecycleView):
     def __init__(self, **kwargs):
         super(RV, self).__init__(**kwargs)
 
         self.data = [{'text': str(x),'keyforacc': str(x)} for x in range(60)]
-
-
-
-
-
-
 
 
 class TimerClockLab(Label):
@@ -134,8 +117,8 @@ class TimerClock_Body(BoxLayout):
 
     def __init__(self, **kwargs):
         super(TimerClock_Body, self).__init__(**kwargs)
-        # self.get_time_time=get_time_time='00:00'
-        self.TM_TC_Label=TM_TC_Label=TimerClockLab(text='00:00',pos_hint={'center_x':0.5,'center_y':0.5})
+        self.get_time_time=get_time_time='00:00'
+        self.TM_TC_Label=TM_TC_Label=TimerClockLab(text=get_time_time,pos_hint={'center_x':0.5,'center_y':0.5})
         self.add_widget(TM_TC_Label)
         with self.canvas.before:
             Color(0, 1, 1, 1)#<-----------------Место для функции смены цвета бэка тамербара    
@@ -144,11 +127,10 @@ class SetTimeTM_body(BoxLayout):
 
     def __init__(self, **kwargs):
         super(SetTimeTM_body, self).__init__(**kwargs)
-        self.scroll_mint=scroll_mint=RV(id='minuteslist',size_hint=(.5,1),pos_hint={'x': 0.0, 'top': 1})
-        self.scroll_sec=scroll_sec=RV(id='secondslist',size_hint=(.5,1),pos_hint={'right': 1.0, 'top': 1})
+        self.scroll_mint=scroll_mint=RV(size_hint=(.5,1),pos_hint={'x': 0.0, 'top': 1})
+        self.scroll_sec=scroll_sec=RV(size_hint=(.5,1),pos_hint={'right': 1.0, 'top': 1})
         self.add_widget(scroll_mint)
         self.add_widget(scroll_sec)
-
         #<-----------------Место для функции смены цвета бэка тамербара
 
         
@@ -208,7 +190,6 @@ class TimerLables(AnchorLayout):
 
 
 class Timer_widget(FloatLayout,I_Button):
-    stop = threading.Event()
     def __init__(self, **kwargs):
         super(Timer_widget, self).__init__(**kwargs)
         Timer_Body=FloatLayout(pos_hint={'center_x':0.5,'y':0})
@@ -230,8 +211,7 @@ class Timer_widget(FloatLayout,I_Button):
         Button_Stop= TimerLables(size_hint=[1/5.5,1],pos_hint={'right': 0.9, 'y': 0})
         Button_Stop.img1.source='icons8-no-96.png'
         Button_Stop.btn1.bind(on_release=self.LetsGetStop)
-        self.valueseconds = None
-        self.valueminutes = None
+
 
 
         Timer_ToolBar=FloatLayout(size_hint=(.9,.1),pos_hint={'center_x':0.5,'y':0})
@@ -248,72 +228,53 @@ class Timer_widget(FloatLayout,I_Button):
 
     def LetsGetStart(self, touch):
         if self.SM_TM.children[0].id == 'firstw':
+            seconds = None
+            minutes = None
 
-            print(self.valueseconds)
-            strat = Strategy(self.inputingprocess(self.valueminutes,self.valueseconds))
-            strat.setTimer()
-            
-
-            # self.inputingprocess(self.valueminutes,self.valueseconds)
+            for ind in range(60):
+                minway =self.SM_TM.children[0].darou.scroll_mint.data
+                if minway[ind]['keyforacc']=='ya':
+                    minway[ind]['keyforacc']=str(ind)
+                    minutes=ind
+                    break
+                    # print('minuta zaebumba')
+            for ind in range(60):
+                secway =self.SM_TM.children[0].darou.scroll_sec.data 
+                if secway[ind]['keyforacc']=='ya':
+                    secway[ind]['keyforacc'] =str(ind)
+                    seconds=ind
+                    break
+                    # print('secunda zaebumba')
+            self.TimerSession.setTimer(float(self.try_input_data(minutes)),float(self.try_input_data(seconds)))    
+        
         self.SM_TM.transition.direction = 'left'
-        self.SM_TM.current = 'ATS'
+        self.SM_TM.current = 'ATS'    
+	
+    def try_input_data(self,data):
         try:
-            threading.Thread(target=self.second_thread, args=(self.SM_TM.children[0].TMWindow.TM_TC_Label.text,)).start()  
-        except RuntimeError:
-            pass    
-    @mainthread
-    def update_label_text(self,new_text):
-        self.SM_TM.children[0].TMWindow.TM_TC_Label.text=new_text
-    def second_thread(self,l_text):
-        Clock.schedule_once(self.TimerSession.CheckTimeTM(), 0)
-        time.sleep(1)
-        self.update_label_text(l_text)
-
-
-
-
-
-
-
-
-
-
-    def inputingprocess(self,mint,sec):
-        try:
-            if (mint == None):
-                raise NoargError(mint)
-            if (sec == None) :
-                raise NoargError(sec)
+            a = data
+            if a == None :
+                raise NoargError(a)
             
         except NoargError as e:
             e.popupsi.open()
-            stratNone= Strategy()
-            return stratNone.setTimer()
-        # except TypeError as y:
-        #     y.popupsi.open()
-        #     return self.TimerSession.PassFunction
+            return 0
         else:
-            return self.TimerSession.setTimer(float(mint),float(sec))
+            return a
     def LetsGetPause(self,touch):
         pass
     def LetsGetStop(self,touch):
         self.SM_TM.transition.direction = 'right'
         self.SM_TM.current = 'STS'
         # self.TimerSession.StopTM(True)
-class Strategy:
-    def __init__(self, func = None):
-        if func is not None:
-            self.execute = types.MethodType(func, self)
-
-    def setTimer(self):
-        pass
 
 
 class NoargError(Exception):
     def __init__(self, value):
         super(NoargError, self).__init__()
         self.value = value
-        self.popupsi=Popup(title='Unexpected/uninputed value',content=Label(text="\nHi,maybe you entered the wrong value\n or forgot to enter it at all\n,lets see what you entered:\n You entered:{0} but this value changed to 0".format(value)),size_hint=(1, .9))
+        self.popupsi=Popup(title='Unexpected/uninputed value',content=Label(text='''Hi,maybe you entered the wrong value or forgot to enter it at all,
+        lets see what you entered: You entered:{0} but this value changed to 0'''.format(value)),size_hint=(1, .9))
         
 class MainApp(App):
 	def build(self):

@@ -18,7 +18,8 @@ class Itime:
 class Time(Itime):
 	
 	def __init__(self):
-		self.systime = time.time()
+		self.systime = 0
+		self.clocktime =time.time()
 		self.sysdate = time.ctime(time.time())[4:10]
 		self.count=0
 		self.status = False
@@ -30,6 +31,9 @@ class Time(Itime):
 	def getDate(self):
 		self.sysdate = time.ctime(time.time())[4:10]
 		return self.sysdate
+
+	def getClockTime(self):
+		return self.clocktime
         
 
 		

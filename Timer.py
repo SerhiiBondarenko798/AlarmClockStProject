@@ -1,8 +1,8 @@
 import time
+
 from Time import Time
 	
 class Timer(Time):
-	
 
 	def setTimer(self,minutes,seconds):
 		print(minutes)
@@ -12,17 +12,17 @@ class Timer(Time):
 		self.timertime = x+self.getTime()
 		# print(self.timertime)
 
-	def CheckTimeTM (self, count):
+	def CheckTimeTM (self):
 
 		self.count=self.timertime - time.time()	
 		if self.count<=0:
 			print(0)
 			return self.giveTime
 		print("%.5f" % self.count)
-		time.sleep(0.1)
+		time.sleep(1)
 
 
-		return self.CheckTimeTM(self.count)
+		return self.CheckTimeTM()
 
 
 	
@@ -37,7 +37,12 @@ class Timer(Time):
 		self.CheckTimeTM()
 	def StopTM(self,value):
 		self.status = value
-
+	def PassFunction(self):
+		pass
 
 	def giveTime(self, gived_value):
 		pass
+
+# d=Timer()
+# d.setTimer(0,15)
+# d.CheckTimeTM()

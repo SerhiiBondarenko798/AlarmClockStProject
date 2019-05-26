@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 __all__ = ('start', 'sleep', 'event', )
 
 import types
@@ -14,7 +12,9 @@ def start(coro):
 
     def step(*args, **kwargs):
         try:
+           
             coro.send(CallbackParameter(args, kwargs))(step)
+
         except StopIteration:
             pass
 
