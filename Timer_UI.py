@@ -250,8 +250,8 @@ class Timer_widget(FloatLayout,I_Button):
         if self.SM_TM.children[0].id == 'firstw':
 
             print(self.valueseconds)
-            strat = Strategy(self.inputingprocess(self.valueminutes,self.valueseconds))
-            strat.setTimer()
+            strat = CommandInputed(self.inputingprocess)
+            strat.execute(self, self.valueminutes, self.valueseconds)
             
 
             # self.inputingprocess(self.valueminutes,self.valueseconds)
@@ -287,11 +287,9 @@ class Timer_widget(FloatLayout,I_Button):
             
         except NoargError as e:
             e.popupsi.open()
-            stratNone= Strategy()
-            return stratNone.setTimer()
-        # except TypeError as y:
-        #     y.popupsi.open()
-        #     return self.TimerSession.PassFunction
+            stratNone= ICommand()
+            return stratNone.execute()
+        
         else:
             return self.TimerSession.setTimer(float(mint),float(sec))
     def LetsGetPause(self,touch):
@@ -300,13 +298,22 @@ class Timer_widget(FloatLayout,I_Button):
         self.SM_TM.transition.direction = 'right'
         self.SM_TM.current = 'STS'
         # self.TimerSession.StopTM(True)
-class Strategy:
+class ICommand:
     def __init__(self, func = None):
-        if func is not None:
-            self.execute = types.MethodType(func, self)
+        self.__func = func
 
-    def setTimer(self):
+    def execute(self, *args, **kwargs):
         pass
+
+class CommandInputed(ICommand):
+    def __init__(self, func = None):
+        super().__init__(func)
+
+    def execute(self, *args, **kwargs):
+        # inputingprocess(self.valueminutes,self.valueseconds)
+        if self.__func:
+            return self.__func(*args, **kwargs)
+        return None
 
 
 class NoargError(Exception):
