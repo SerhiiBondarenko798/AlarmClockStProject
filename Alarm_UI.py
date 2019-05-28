@@ -27,9 +27,9 @@ from kivy.uix.popup import Popup
 import time
 import types
 from Time import Time 
-from Timer import Timer
+from Alarm import Alarm
 Builder.load_string('''
-<TimerClockLab>:
+<AlarmClockLab>:
     font_size: 50
     color: (0, 1, 1, 1)
     canvas:
@@ -106,19 +106,19 @@ class RV(RecycleView):
         self.data = [{'text': str(x),'keyforacc': str(x)} for x in range(60)]
 
 
-class TimerClockLab(Label):
+class AlarmClockLab(Label):
    def __init__(self, **kwargs):
-        super(TimerClockLab, self).__init__(**kwargs)
+        super(AlarmClockLab, self).__init__(**kwargs)
         
 
         
 
-class TimerClock_Body(BoxLayout):
+class AlarmClock_Body(BoxLayout):
 
     def __init__(self, **kwargs):
-        super(TimerClock_Body, self).__init__(**kwargs)
+        super(AlarmClock_Body, self).__init__(**kwargs)
         self.get_time_time=get_time_time='00:00'
-        self.TM_TC_Label=TM_TC_Label=TimerClockLab(text=get_time_time,pos_hint={'center_x':0.5,'center_y':0.5})
+        self.TM_TC_Label=TM_TC_Label=AlarmClockLab(text=get_time_time,pos_hint={'center_x':0.5,'center_y':0.5})
         self.add_widget(TM_TC_Label)
         with self.canvas.before:
             Color(0, 1, 1, 1)#<-----------------Место для функции смены цвета бэка тамербара    
@@ -151,12 +151,12 @@ class Set_Time_Screen(Screen):
 class Act_Time_Screen(Screen):
     def __init__(self, **kwargs):
         super(Act_Time_Screen, self).__init__(**kwargs)
-        self.TMWindow=TMWindow=TimerClock_Body()
+        self.TMWindow=TMWindow=AlarmClock_Body()
         self.add_widget(TMWindow)
 
-class TimerLables(AnchorLayout):
+class AlarmLables(AnchorLayout):
     def __init__(self, **kwargs):
-        super(TimerLables, self).__init__(**kwargs)
+        super(AlarmLables, self).__init__(**kwargs)
         self.img1=img1=Image(size_hint=(.5,.5), color = (0,1,1,1),mipmap=1)#<-----------------Место для функции смены пассивного цвета кнопки
         self.btn1 = btn1 =Button(background_color=(0,0,0,0))
         self.add_widget(img1,index=-1)
@@ -189,42 +189,42 @@ class TimerLables(AnchorLayout):
 		
 
 
-class Timer_widget(FloatLayout,I_Button):
+class Alarm_widget(FloatLayout,I_Button):
     def __init__(self, **kwargs):
-        super(Timer_widget, self).__init__(**kwargs)
-        Timer_Body=FloatLayout(pos_hint={'center_x':0.5,'y':0})
+        super(Alarm_widget, self).__init__(**kwargs)
+        Alarm_Body=FloatLayout(pos_hint={'center_x':0.5,'y':0})
         self.SM_TM = SM_TM  =ScreenManager(size_hint=[1,.8],pos_hint={'center_x':0.5,'top':1})
         self.frst=frst=Set_Time_Screen(name='STS',id='firstw')
         self.scnd=scnd=Act_Time_Screen(name='ATS',id='scndw')
         self.SM_TM.add_widget(frst)
         self.SM_TM.add_widget(scnd)
-        self.TimerSession= TimerSession = Timer()
+        self.AlarmSession= AlarmSession = Alarm()
 
-        Button_Start= TimerLables(size_hint=[1/5.5,1],pos_hint={'x': 0.1, 'y': 0})
+        Button_Start= AlarmLables(size_hint=[1/5.5,1],pos_hint={'x': 0.1, 'y': 0})
         Button_Start.img1.source='icons8-circled-play-filled-90.png'
         Button_Start.btn1.bind(on_release=self.LetsGetStart)
 
-        Button_Pause= TimerLables(size_hint=[1/5.5,1],pos_hint={'center_x': .5, 'y': 0})
+        Button_Pause= AlarmLables(size_hint=[1/5.5,1],pos_hint={'center_x': .5, 'y': 0})
         Button_Pause.img1.source='icons8-pause-button-filled-96.png'
         Button_Pause.btn1.bind(on_release=self.LetsGetPause)
 
-        Button_Stop= TimerLables(size_hint=[1/5.5,1],pos_hint={'right': 0.9, 'y': 0})
+        Button_Stop= AlarmLables(size_hint=[1/5.5,1],pos_hint={'right': 0.9, 'y': 0})
         Button_Stop.img1.source='icons8-no-96.png'
         Button_Stop.btn1.bind(on_release=self.LetsGetStop)
 
 
 
-        Timer_ToolBar=FloatLayout(size_hint=(.9,.1),pos_hint={'center_x':0.5,'y':0})
-        Timer_ToolBar.add_widget(Button_Start)
-        Timer_ToolBar.add_widget(Button_Pause)
-        Timer_ToolBar.add_widget(Button_Stop)
+        Alarm_ToolBar=FloatLayout(size_hint=(.9,.1),pos_hint={'center_x':0.5,'y':0})
+        Alarm_ToolBar.add_widget(Button_Start)
+        Alarm_ToolBar.add_widget(Button_Pause)
+        Alarm_ToolBar.add_widget(Button_Stop)
 
 
 
 
-        Timer_Body.add_widget(SM_TM)
-        Timer_Body.add_widget(Timer_ToolBar)
-        self.add_widget(Timer_Body)
+        Alarm_Body.add_widget(SM_TM)
+        Alarm_Body.add_widget(Alarm_ToolBar)
+        self.add_widget(Alarm_Body)
 
     def LetsGetStart(self, touch):
         if self.SM_TM.children[0].id == 'firstw':
@@ -245,7 +245,7 @@ class Timer_widget(FloatLayout,I_Button):
                     seconds=ind
                     break
                     # print('secunda zaebumba')
-            self.TimerSession.setTimer(float(self.try_input_data(minutes)),float(self.try_input_data(seconds)))    
+            self.AlarmSession.SetAlarm(int(self.try_input_data(minutes)),int(self.try_input_data(seconds)))    
         
         self.SM_TM.transition.direction = 'left'
         self.SM_TM.current = 'ATS'    
@@ -266,7 +266,7 @@ class Timer_widget(FloatLayout,I_Button):
     def LetsGetStop(self,touch):
         self.SM_TM.transition.direction = 'right'
         self.SM_TM.current = 'STS'
-        # self.TimerSession.StopTM(True)
+        # self.AlarmSession.StopTM(True)
 
 
 class NoargError(Exception):
@@ -278,7 +278,7 @@ class NoargError(Exception):
         
 class MainApp(App):
 	def build(self):
-		return Timer_widget()
+		return Alarm_widget()
 
 
 

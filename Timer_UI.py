@@ -135,7 +135,7 @@ class TimerClock_Body(BoxLayout):
     def __init__(self, **kwargs):
         super(TimerClock_Body, self).__init__(**kwargs)
         # self.get_time_time=get_time_time='00:00'
-        self.TM_TC_Label=TM_TC_Label=TimerClockLab(text='00:00',pos_hint={'center_x':0.5,'center_y':0.5})
+        self.TM_TC_Label=TM_TC_Label=TimerClockLab(text=' ',pos_hint={'center_x':0.5,'center_y':0.5})
         self.add_widget(TM_TC_Label)
         with self.canvas.before:
             Color(0, 1, 1, 1)#<-----------------Место для функции смены цвета бэка тамербара    
@@ -249,33 +249,36 @@ class Timer_widget(FloatLayout,I_Button):
     def LetsGetStart(self, touch):
         if self.SM_TM.children[0].id == 'firstw':
 
-            print(self.valueseconds)
             strat = CommandInputed(self.inputingprocess)
             strat.execute(self, self.valueminutes, self.valueseconds)
-            
-
             # self.inputingprocess(self.valueminutes,self.valueseconds)
         self.SM_TM.transition.direction = 'left'
         self.SM_TM.current = 'ATS'
-        try:
-            threading.Thread(target=self.second_thread, args=(self.SM_TM.children[0].TMWindow.TM_TC_Label.text,)).start()  
-        except RuntimeError:
-            pass    
+        threading.Thread(target=self.second_thread, args=(self.SM_TM.children[0].TMWindow.TM_TC_Label.text,)).start() 
+           
+      
+        # else:  
+        #     self.SM_TM.transition.direction = 'left'
+        #     self.SM_TM.current = 'ATS'
     @mainthread
     def update_label_text(self,new_text):
         self.SM_TM.children[0].TMWindow.TM_TC_Label.text=new_text
+
+
     def second_thread(self,l_text):
-        Clock.schedule_once(self.TimerSession.CheckTimeTM(), 0)
-        time.sleep(1)
-        self.update_label_text(l_text)
 
-
-
-
-
-
-
-
+        try:
+            while True:
+                if self.TimerSession.count<0: 
+                    self.update_label_text("00:00")
+                    break
+                Clock.schedule_once(self.TimerSession.CheckTimeTM, 0)
+                self.update_label_text(str(int(self.TimerSession.count//60))+":"+str(int(self.TimerSession.count%60)))
+                time.sleep(1)
+                
+        except AttributeError:
+            self.SM_TM.transition.direction = 'right'
+            self.SM_TM.current = 'STS'
 
 
     def inputingprocess(self,mint,sec):
@@ -307,14 +310,20 @@ class ICommand:
 
 class CommandInputed(ICommand):
     def __init__(self, func = None):
-        super().__init__(func)
+        super(CommandInputed, self).__init__(func)
+        self.__func=func
 
-    def execute(self, *args, **kwargs):
+    def execute(self,this, *args, **kwargs):
         # inputingprocess(self.valueminutes,self.valueseconds)
         if self.__func:
             return self.__func(*args, **kwargs)
         return None
 
+
+class countZero(Exception):
+    def __init__(self, value):
+        super(countZero, self).__init__()
+        self.value = value        
 
 class NoargError(Exception):
     def __init__(self, value):
