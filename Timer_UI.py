@@ -174,6 +174,59 @@ class Act_Time_Screen(Screen):
         self.TMWindow=TMWindow=TimerClock_Body()
         self.add_widget(TMWindow)
 
+
+class Call_Time_Screen(Screen):
+    def __init__(self, **kwargs):
+        super(Call_Time_Screen, self).__init__(**kwargs)
+        self.CallMsgBar=CallMsgBar=CallMsgBody(size_hint=[.9,.8],pos_hint={'center_x':0.5,'top':1})
+        self.add_widget(CallMsgBar)
+        self.CWindow=CWindow=BoxLayout(size_hint=[.9,.2],pos_hint={'center_x':0.5,'y':0})
+        self.CallAgreeButt=CallButt(size_hint=[1/2,1],pos_hint={'x': 0, 'y': 0})
+        self.CallDAgreeButt=CallButt(size_hint=[1/2,1],pos_hint={'right': 1, 'y': 0})
+        CWindow.add_widget(CallAgreeButt)
+        CWindow.add_widget(CallDAgreeButt)
+        self.add_widget(CWindow)
+        
+class CallMsgBody(Label):
+    def __init__(self,**kwargs):
+        super(CallMsgBody, self).__init__(**kwargs)
+        self.text ='Sudar,pryamo seychas washe utroistvo izdayot nepriyatniy zvuk,\n recomenduyu chto-to s etim sdelat!'
+        self.font_size = 50
+        with self.canvas.before:
+            Color(0, 1, 1, 1) 
+class CallButt(AnchorLayout):
+
+    def __init__(self, **kwargs):
+        super(CallButtBar, self).__init__(**kwargs)
+        self.img1=img1=Image(size_hint=(.5,.5), color = (0,1,1,1),mipmap=1)#<-----------------Место для функции смены пассивного цвета кнопки
+        self.btn1 = btn1 =Button(background_color=(0,0,0,0))
+        self.add_widget(img1,index=-1)
+        self.add_widget(self.btn1)
+        btn1.bind(on_press=self.ButtonON, on_release=self.ButtonOFF)
+        with self.canvas.before:
+            Color(.1, .1, .1, 1)#<-----------------Место для функции смены цвета бэка тулбара в пасивном состоянии
+            self.rect = Rectangle(size=self.size, pos=self.pos)
+            self.bind(size=self._update_rect, pos=self._update_rect)
+    def _update_rect(self, instance, value):
+        self.rect.pos = instance.pos
+        self.rect.size = instance.size
+
+    def ButtonON(self,touch):
+        self.img1.color =(0,0,0,1)#<-----------------Место для функции смены активного цвета кнопки
+        with self.canvas.before:
+            Color(0, 1, 1, 1)#<-----------------Место для функции смены цвета бэка тулбара в активном состоянии
+            self.rect = Ellipse(size=self.size, pos=self.pos)
+            self.bind(size=self._update_rect, pos=self._update_rect)
+
+    def ButtonOFF(self,touch):
+        self.img1.color =(0,1,1,1)#<-----------------Место для функции смены пассивного цвета кнопки
+        with self.canvas.before:
+            Color(.1, .1, .1, 1)#<-----------------Место для функции смены цвета бэка тулбара в пасивном состоянии
+            self.rect = Ellipse(size=self.size, pos=self.pos)
+            self.bind(size=self._update_rect, pos=self._update_rect)   
+        
+        
+
 class TimerLables(AnchorLayout):
     def __init__(self, **kwargs):
         super(TimerLables, self).__init__(**kwargs)
@@ -213,55 +266,82 @@ class Timer_widget(FloatLayout,I_Button):
     # stop = threading.Event()
     def __init__(self, **kwargs):
         super(Timer_widget, self).__init__(**kwargs)
-        Timer_Body=FloatLayout(pos_hint={'center_x':0.5,'y':0})
+        self.Timer_Body=Timer_Body=FloatLayout(pos_hint={'center_x':0.5,'y':0})
         self.SM_TM = SM_TM  =ScreenManager(size_hint=[1,.8],pos_hint={'center_x':0.5,'top':1})
         self.frst=frst=Set_Time_Screen(name='STS',id='firstw')
         self.scnd=scnd=Act_Time_Screen(name='ATS',id='scndw')
+        self.thd=thd=Call_Time_Screen(name='CTS',id='thdw')
+        thd.CallAgreeButt.img1.source='icons8-circled-play-filled-90.png'
+        thd.CallAgreeButt.btn1.bind(on_release=self.IAgree)
+        thd.CallDAgreeButt.img1.source='icons8-no-96.png'
+        thd.CallDAgreeButt.btn1.bind(on_release=self.IDAgree)
         self.SM_TM.add_widget(frst)
         self.SM_TM.add_widget(scnd)
+        self.SM_TM.add_widget(thd)
         self.TimerSession= TimerSession = Timer()
 
-        Button_Start= TimerLables(size_hint=[1/5.5,1],pos_hint={'x': 0.1, 'y': 0})
+        self.Button_Start=Button_Start= TimerLables(size_hint=[1/5.5,1],pos_hint={'x': 0.1, 'y': 0})
         Button_Start.img1.source='icons8-circled-play-filled-90.png'
         Button_Start.btn1.bind(on_release=self.LetsGetStart)
 
-        Button_Pause= TimerLables(size_hint=[1/5.5,1],pos_hint={'center_x': .5, 'y': 0})
+        self.Button_Pause=Button_Pause= TimerLables(size_hint=[1/5.5,1],pos_hint={'center_x': .5, 'y': 0})
         Button_Pause.img1.source='icons8-pause-button-filled-96.png'
         Button_Pause.btn1.bind(on_release=self.LetsGetPause)
 
-        Button_Stop= TimerLables(size_hint=[1/5.5,1],pos_hint={'right': 0.9, 'y': 0})
+        self.Button_Stop=Button_Stop= TimerLables(size_hint=[1/5.5,1],pos_hint={'right': 0.9, 'y': 0})
         Button_Stop.img1.source='icons8-no-96.png'
         Button_Stop.btn1.bind(on_release=self.LetsGetStop)
         self.valueseconds = None
         self.valueminutes = None
 
 
-        Timer_ToolBar=FloatLayout(size_hint=(.9,.1),pos_hint={'center_x':0.5,'y':0})
+        self.Timer_ToolBar=Timer_ToolBar=FloatLayout(size_hint=(.9,.1),pos_hint={'center_x':0.5,'y':0})
         Timer_ToolBar.add_widget(Button_Start)
         Timer_ToolBar.add_widget(Button_Pause)
         Timer_ToolBar.add_widget(Button_Stop)
 
-
+        self.touchedS=BooleanProperty(False)
+        self.touchedP=BooleanProperty(False)
 
 
         Timer_Body.add_widget(SM_TM)
         Timer_Body.add_widget(Timer_ToolBar)
         self.add_widget(Timer_Body)
 
+    def IAgree(self,touch):
+        pass
+
+
+    def IDAgree(self,touch):
+        pass
+
+
+
+    def LetsGetContinue(self,touch):
+        print('sosi2')
+        strat = CommandInputed(self.inputingprocess)
+        strat.execute(self, self.valueminutes, self.valueseconds)
+        self.Timer_ToolBar.add_widget(self.Button_Pause)
+        self.my_thread=threading.Thread(target=self.second_thread, args=(self.SM_TM.children[0].TMWindow.TM_TC_Label.text,))
+        self.my_thread.start()
     def LetsGetStart(self, touch):
         if self.SM_TM.children[0].id == 'firstw':
+            print('sosi1')
             # print(self.valueminutes)
             strat = CommandInputed(self.inputingprocess)
             strat.execute(self, self.valueminutes, self.valueseconds)
             # self.inputingprocess(self.valueminutes,self.valueseconds)
-        self.SM_TM.transition.direction = 'left'
-        self.SM_TM.current = 'ATS'
-        self.my_thread=threading.Thread(target=self.second_thread, args=(self.SM_TM.children[0].TMWindow.TM_TC_Label.text,))
-        self.my_thread.start()
-        # self.my_thread.join()
-        # self.my_thread.kill()
-        # self.my_thread.join() 
-           
+            self.SM_TM.transition.direction = 'left'
+            self.SM_TM.current = 'ATS'
+            self.my_thread=threading.Thread(target=self.second_thread, args=(self.SM_TM.children[0].TMWindow.TM_TC_Label.text,))
+            self.my_thread.start()
+            
+        # if self.SM_TM.children[0].id == 'scndw':
+            # print('sosi1')
+            # strat = CommandInputed(self.inputingprocess)
+            # strat.execute(self, self.valueminutes, self.valueseconds)
+            # self.my_thread=threading.Thread(target=self.second_thread, args=(self.SM_TM.children[0].TMWindow.TM_TC_Label.text,))
+            # self.my_thread.start()
       
         # else:  
         #     self.SM_TM.transition.direction = 'left'
@@ -269,30 +349,49 @@ class Timer_widget(FloatLayout,I_Button):
     @mainthread
     def update_label_text(self,new_text):
         self.SM_TM.children[0].TMWindow.TM_TC_Label.text=new_text
+    @mainthread
+    def update_screen_to_STS(self):
+        self.SM_TM.transition.direction = 'right'
+        self.SM_TM.current = 'STS'
+
+    @mainthread
+    def update_label_glif(self,newglif_inst,inst):
+        self.instance=newglif_inst
 
 
     def second_thread(self,l_text):
 
         # try:
-            self.update_label_text(str(self.TimerSession.count//60)+":"+str(self.TimerSession.count%60))
+            self.touchedS = False
+            self.touchedP = False
+            # print(self.TimerSession.count)
+            # self.update_label_text(str(self.TimerSession.count//60)+":"+str(self.TimerSession.count%60))
             self.TimerSession.CheckTimeTM()
             self.update_label_text(str(self.TimerSession.count//60)+":"+str(self.TimerSession.count%60))
-            time.sleep(1)
             while self.TimerSession.count>0:
-
-                
-
                 self.TimerSession.CheckTimeTM()
-                if self.TimerSession.count<0: 
-                    self.update_label_text("0:0")
+                
+                if  self.touchedP==True:
+                    break
+                if  self.touchedS==True:
+                    self.update_screen_to_STS()
                     break
                 self.update_label_text(str(self.TimerSession.count//60)+":"+str(self.TimerSession.count%60))
+                if self.TimerSession.count<=0 : 
+                    self.update_label_text("0:0")
+                    print('sosi')
+                    self.TimerSession.doAlarmTM()
+                    time.sleep(1)
+                    self.update_screen_to_STS()
+                    break
+                    
                 time.sleep(1)
-            self.update_label_text("0:0")
-        # except AttributeError:
+                    # except AttributeError:
         #     self.SM_TM.transition.direction = 'right'
         #     self.SM_TM.current = 'STS'
-
+            
+    def ImPassive(self,touch):
+        pass
 
     def inputingprocess(self,mint,sec):
         try:
@@ -309,48 +408,19 @@ class Timer_widget(FloatLayout,I_Button):
         else:
             return self.TimerSession.setTimer(float(mint),float(sec))
     def LetsGetPause(self,touch):
-        pass
+        if self.SM_TM.children[0].id == 'scndw':
+            self.Button_Start.btn1.bind(on_release=self.LetsGetContinue)
+            self.Timer_ToolBar.remove_widget(self.Button_Pause)
+            self.valueminutes= self.TimerSession.count//60
+            self.valueseconds= self.TimerSession.count%60
+            self.touchedP=True
     def LetsGetStop(self,touch):
-        self.SM_TM.transition.direction = 'right'
-        self.SM_TM.current = 'STS'
-        # self.TimerSession.StopTM(True)
+        if self.SM_TM.children[0].id == 'scndw':
+            self.touchedS=True
 
 
 
         
-        
-        
-
-
-# class thread_with_trace(threading.Thread): 
-#   def __init__(self, *args, **keywords): 
-#     threading.Thread.__init__(self, *args, **keywords) 
-#     self.killed = False
-  
-#   def start(self): 
-#     self.__run_backup = self.run 
-#     self.run = self.__run       
-#     threading.Thread.start(self) 
-  
-#   def __run(self): 
-#     sys.settrace(self.globaltrace) 
-#     self.__run_backup() 
-#     self.run = self.__run_backup 
-  
-#   def globaltrace(self, frame, event, arg): 
-#     if event == 'call': 
-#       return self.localtrace 
-#     else: 
-#       return None
-  
-#   def localtrace(self, frame, event, arg): 
-#     if self.killed: 
-#       if event == 'line': 
-#         raise SystemExit() 
-#     return self.localtrace 
-  
-#   def kill(self): 
-#     self.killed = True
         
 class ICommand:
     def __init__(self, func = None):
