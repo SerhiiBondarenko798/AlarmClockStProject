@@ -1,5 +1,4 @@
 import time
-
 from Time import Time
 	
 class Timer(Time):
@@ -10,16 +9,17 @@ class Timer(Time):
 		self.x= minutes*60 + seconds
 		
 		self.timertime = self.x+self.getTime()
+		self.count=self.timertime - time.time()
 		# print(self.timertime)
 
 	def CheckTimeTM (self, *args, **kwargs):
 
 		self.count=self.timertime - time.time()	
-		
-		print(str(int(self.count//60))+":"+str(int(self.count%60)))
+		self.count=round(self.count)
+		print(str(self.count//60)+":"+str(self.count%60))
 
 
-		return self.giveTime#teresh pidor otday svoy kletchatie shtani, oni top
+		# return self.giveTime#teresh pidor otday svoy kletchatie shtani, oni top
 
 
 	

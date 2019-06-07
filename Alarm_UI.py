@@ -24,6 +24,7 @@ from kivy.uix.recycleview.layout import LayoutSelectionBehavior
 from abc import ABCMeta, abstractmethod, abstractproperty, ABC
 from abstract_classes import I_input_getTime, I_Button
 from kivy.uix.popup import Popup
+from kivy.uix.scrollview import ScrollView
 import time
 import types
 from Time import Time 
@@ -141,12 +142,21 @@ class TM_SM(ScreenManager):
         self.snovadarou=snovadarou=Set_Time_Screen()
         self.add_widget(snovadarou)
         
-
+class FeachBar(BoxLayout):
+    """docstring for FeachBar"""
+    def __init__(self, arg):
+        super(FeachBar, self).__init__()
+        
+        
 class Set_Time_Screen(Screen):
     def __init__(self, **kwargs):
         super(Set_Time_Screen, self).__init__(**kwargs)
         self.darou=darou=SetTimeTM_body(size_hint=(1,1),pos_hint={'center_x':0.5,'center_y':0.5},padding =[0,0,0,0])
+        self.selectspecial=FeachBar(orientation='horisontal',size_hint=(1,1))
+        self.scroller=ScrollView(size_hint=((1,1)))
         self.add_widget(darou)
+        self.add_widget(selectspecial)
+        self.add_widget()
 
 class Act_Time_Screen(Screen):
     def __init__(self, **kwargs):
@@ -227,45 +237,11 @@ class Alarm_widget(FloatLayout,I_Button):
         self.add_widget(Alarm_Body)
 
     def LetsGetStart(self, touch):
-        if self.SM_TM.children[0].id == 'firstw':
-            seconds = None
-            minutes = None
-
-            for ind in range(60):
-                minway =self.SM_TM.children[0].darou.scroll_mint.data
-                if minway[ind]['keyforacc']=='ya':
-                    minway[ind]['keyforacc']=str(ind)
-                    minutes=ind
-                    break
-                    # print('minuta zaebumba')
-            for ind in range(60):
-                secway =self.SM_TM.children[0].darou.scroll_sec.data 
-                if secway[ind]['keyforacc']=='ya':
-                    secway[ind]['keyforacc'] =str(ind)
-                    seconds=ind
-                    break
-                    # print('secunda zaebumba')
-            self.AlarmSession.SetAlarm(int(self.try_input_data(minutes)),int(self.try_input_data(seconds)))    
-        
-        self.SM_TM.transition.direction = 'left'
-        self.SM_TM.current = 'ATS'    
-	
-    def try_input_data(self,data):
-        try:
-            a = data
-            if a == None :
-                raise NoargError(a)
-            
-        except NoargError as e:
-            e.popupsi.open()
-            return 0
-        else:
-            return a
+        pass
     def LetsGetPause(self,touch):
         pass
     def LetsGetStop(self,touch):
-        self.SM_TM.transition.direction = 'right'
-        self.SM_TM.current = 'STS'
+        pass
         # self.AlarmSession.StopTM(True)
 
 

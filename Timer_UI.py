@@ -29,6 +29,8 @@ from kivy.animation import Animation
 from kivy.clock import Clock, mainthread
 from kivy.uix.gridlayout import GridLayout
 import threading
+import sys 
+import trace
 import time
 import types
 from Time import Time 
@@ -208,7 +210,7 @@ class TimerLables(AnchorLayout):
 
 
 class Timer_widget(FloatLayout,I_Button):
-    stop = threading.Event()
+    # stop = threading.Event()
     def __init__(self, **kwargs):
         super(Timer_widget, self).__init__(**kwargs)
         Timer_Body=FloatLayout(pos_hint={'center_x':0.5,'y':0})
@@ -248,13 +250,17 @@ class Timer_widget(FloatLayout,I_Button):
 
     def LetsGetStart(self, touch):
         if self.SM_TM.children[0].id == 'firstw':
-
+            # print(self.valueminutes)
             strat = CommandInputed(self.inputingprocess)
             strat.execute(self, self.valueminutes, self.valueseconds)
             # self.inputingprocess(self.valueminutes,self.valueseconds)
         self.SM_TM.transition.direction = 'left'
         self.SM_TM.current = 'ATS'
-        threading.Thread(target=self.second_thread, args=(self.SM_TM.children[0].TMWindow.TM_TC_Label.text,)).start() 
+        self.my_thread=threading.Thread(target=self.second_thread, args=(self.SM_TM.children[0].TMWindow.TM_TC_Label.text,))
+        self.my_thread.start()
+        # self.my_thread.join()
+        # self.my_thread.kill()
+        # self.my_thread.join() 
            
       
         # else:  
@@ -267,18 +273,25 @@ class Timer_widget(FloatLayout,I_Button):
 
     def second_thread(self,l_text):
 
-        try:
-            while True:
-                if self.TimerSession.count<0: 
-                    self.update_label_text("00:00")
-                    break
-                Clock.schedule_once(self.TimerSession.CheckTimeTM, 0)
-                self.update_label_text(str(int(self.TimerSession.count//60))+":"+str(int(self.TimerSession.count%60)))
-                time.sleep(1)
+        # try:
+            self.update_label_text(str(self.TimerSession.count//60)+":"+str(self.TimerSession.count%60))
+            self.TimerSession.CheckTimeTM()
+            self.update_label_text(str(self.TimerSession.count//60)+":"+str(self.TimerSession.count%60))
+            time.sleep(1)
+            while self.TimerSession.count>0:
+
                 
-        except AttributeError:
-            self.SM_TM.transition.direction = 'right'
-            self.SM_TM.current = 'STS'
+
+                self.TimerSession.CheckTimeTM()
+                if self.TimerSession.count<0: 
+                    self.update_label_text("0:0")
+                    break
+                self.update_label_text(str(self.TimerSession.count//60)+":"+str(self.TimerSession.count%60))
+                time.sleep(1)
+            self.update_label_text("0:0")
+        # except AttributeError:
+        #     self.SM_TM.transition.direction = 'right'
+        #     self.SM_TM.current = 'STS'
 
 
     def inputingprocess(self,mint,sec):
@@ -301,6 +314,44 @@ class Timer_widget(FloatLayout,I_Button):
         self.SM_TM.transition.direction = 'right'
         self.SM_TM.current = 'STS'
         # self.TimerSession.StopTM(True)
+
+
+
+        
+        
+        
+
+
+# class thread_with_trace(threading.Thread): 
+#   def __init__(self, *args, **keywords): 
+#     threading.Thread.__init__(self, *args, **keywords) 
+#     self.killed = False
+  
+#   def start(self): 
+#     self.__run_backup = self.run 
+#     self.run = self.__run       
+#     threading.Thread.start(self) 
+  
+#   def __run(self): 
+#     sys.settrace(self.globaltrace) 
+#     self.__run_backup() 
+#     self.run = self.__run_backup 
+  
+#   def globaltrace(self, frame, event, arg): 
+#     if event == 'call': 
+#       return self.localtrace 
+#     else: 
+#       return None
+  
+#   def localtrace(self, frame, event, arg): 
+#     if self.killed: 
+#       if event == 'line': 
+#         raise SystemExit() 
+#     return self.localtrace 
+  
+#   def kill(self): 
+#     self.killed = True
+        
 class ICommand:
     def __init__(self, func = None):
         self.__func = func
