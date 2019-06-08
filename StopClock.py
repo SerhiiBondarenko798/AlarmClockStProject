@@ -12,10 +12,10 @@ class NewPrint(Exception):
 class StopClock(Time):
 
 
-	def startSC(self, *args, **kwargs):
-			self.count = time.time()-self.getClockTime() 
+	def startSC(self, count = 0):
+			self.count = count+(time.time()-self.getClockTime())
 		
-
+			
 			# if self.pauseSC():
 			# 	print(count)
 			# 	while True:
