@@ -106,7 +106,7 @@ class StopClockWidget(FloatLayout):
         SC_Body=FloatLayout(pos_hint={'center_x':0.5,'y':0})
 
 
-        Button_Start= SC_Lables(size_hint=[1/5.5,1],pos_hint={'x': 0.1, 'y': 0})
+        self.Button_Start= Button_Start= SC_Lables(size_hint=[1/5.5,1],pos_hint={'x': 0.1, 'y': 0})
         Button_Start.img1.source='icons8-circled-play-filled-90.png'
         Button_Start.btn1.bind(on_release=self.LetsGetStart)
 
@@ -144,49 +144,40 @@ class StopClockWidget(FloatLayout):
 
 
     def LetsGetPause(self,touch):
-        pass
-
-    def LetsGetStop(self, touch):
         global shouldRun
         shouldRun = False
+        self.count = self.SCSession.count
+        print("my time"+str(self.count))
+        
+        self.Button_Start.btn1.bind(on_release=self.LetsGetContinue)
+    def LetsGetContinue(self, touch):
+        global shouldRun
+        shouldRun = True
+        self.my_thread=threading.Thread(target=self.second_thread, args=(self.circle.SCWindow.pis.text,))
+        self.my_thread.start()
+        print ("continue")
+    def LetsGetStop(self, touch):
+        pass
+
+
 
     @mainthread
     def update_label_text(self,new_text):
-        global shouldRun
-        if shouldRun:
-            self.circle.SCWindow.pis.text=new_text
-            print("chlen")
-        else: 
-            pass
+        self.circle.SCWindow.pis.text=new_text
+       
 
     def second_thread(self,l_text):
             global shouldRun
-        # try:
-            # self.update_label_text(str(int(self.SCSession.count))+":"+str(self.SCSession.count%60))
-            # self.SCSession.startSC()
-            # self.update_label_text(str(round(self.SCSession.count%60, 3)))
-            # time.sleep(0.1)
-            while shouldRun:
+    
+            while self.SCSession.count>=0:
+                if shouldRun == False:
+                    self.SCSession.pauseSC()
+                    print("vse")
+                    break
                 self.SCSession.startSC()
                 self.update_label_text(str(int(self.SCSession.count//60))+":"+str(round(self.SCSession.count%60, 1)))
                 print(str(int(self.SCSession.count)))
-                time.sleep(0.1)
-                
-
-    def inputingprocess(self,mint,sec):
-        try:
-            if (mint == None):
-                raise NoargError(mint)
-            if (sec == None) :
-                raise NoargError(sec)
-            
-        except NoargError as e:
-            e.popupsi.open()
-            stratNone= ICommand()
-            return stratNone.execute()
-        
-        else:
-            pass
+                time.sleep(0.1)  
 
 class ICommand:
     def __init__(self, func = None):
