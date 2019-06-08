@@ -191,8 +191,8 @@ class Call_Time_Screen(Screen):
 class CallMsgBody(Label):
     def __init__(self,**kwargs):
         super(CallMsgBody, self).__init__(**kwargs)
-        self.text ='Sudar,pryamo seychas washe utroistvo izdayot nepriyatniy zvuk,\n recomenduyu chto-to s etim sdelat!'
-        self.font_size = 50
+        self.text ='Sudar,pryamo seychas washe utroistvo\n izdayot nepriyatniy zvuk,\n recomenduyu chto-to s etim sdelat!'
+        self.font_size = 15
         with self.canvas.before:
             Color(0, 1, 1, 1) 
 class CallButt(AnchorLayout):
@@ -216,14 +216,14 @@ class CallButt(AnchorLayout):
         self.img1.color =(0,0,0,1)#<-----------------Место для функции смены активного цвета кнопки
         with self.canvas.before:
             Color(0, 1, 1, 1)#<-----------------Место для функции смены цвета бэка тулбара в активном состоянии
-            self.rect = Ellipse(size=self.size, pos=self.pos)
+            self.rect = Rectangle(size=self.size, pos=self.pos)
             self.bind(size=self._update_rect, pos=self._update_rect)
 
     def ButtonOFF(self,touch):
         self.img1.color =(0,1,1,1)#<-----------------Место для функции смены пассивного цвета кнопки
         with self.canvas.before:
             Color(.1, .1, .1, 1)#<-----------------Место для функции смены цвета бэка тулбара в пасивном состоянии
-            self.rect = Ellipse(size=self.size, pos=self.pos)
+            self.rect = Rectangle(size=self.size, pos=self.pos)
             self.bind(size=self._update_rect, pos=self._update_rect)   
         
         
@@ -273,9 +273,9 @@ class Timer_widget(FloatLayout,I_Button):
         self.scnd=scnd=Act_Time_Screen(name='ATS',id='scndw')
         self.thd=thd=Call_Time_Screen(name='CTS',id='thdw')
         thd.CallAgreeButt.img1.source='icons8-circled-play-filled-90.png'
-        thd.CallAgreeButt.btn1.bind(on_release=self.IAgree)
+        thd.CallAgreeButt.btn1.bind(on_release=self.IDAgree)
         thd.CallDAgreeButt.img1.source='icons8-no-96.png'
-        thd.CallDAgreeButt.btn1.bind(on_release=self.IDAgree)
+        thd.CallDAgreeButt.btn1.bind(on_release=self.IAgree)
         self.SM_TM.add_widget(frst)
         self.SM_TM.add_widget(scnd)
         self.SM_TM.add_widget(thd)
@@ -294,7 +294,7 @@ class Timer_widget(FloatLayout,I_Button):
         Button_Stop.btn1.bind(on_release=self.LetsGetStop)
         self.valueseconds = None
         self.valueminutes = None
-        
+
 
         self.Timer_ToolBar=Timer_ToolBar=FloatLayout(size_hint=(.9,.1),pos_hint={'center_x':0.5,'y':0})
         Timer_ToolBar.add_widget(Button_Start)
@@ -303,25 +303,32 @@ class Timer_widget(FloatLayout,I_Button):
 
         self.touchedS=BooleanProperty(False)
         self.touchedP=BooleanProperty(False)
+        self.audiobool=BooleanProperty(False)
         self.sound_inst_loop=['Sound1.mp3','Sound2.mp3','Sound3.mp3','Sound4.mp3','Sound5.mp3']
         self.sound_loop=['1','2','3','4','5']
         for i in range(len(self.sound_inst_loop)):
             self.sound_loop[i] = SoundLoader.load(self.sound_inst_loop[i])
-        
         Timer_Body.add_widget(SM_TM)
         Timer_Body.add_widget(Timer_ToolBar)
         self.add_widget(Timer_Body)
-
+    @mainthread
     def IAgree(self,touch):
-        pass
+        self.audiobool=True
+        self.SM_TM.transition.direction = 'up'
+        self.SM_TM.current = 'STS'
 
-
+    @mainthread
     def IDAgree(self,touch):
-        pass
+        self.audiobool=True
+        self.valueminutes=5
+        self.valueseconds=5
+        self.SM_TM.transition.direction = 'up'
+        self.SM_TM.current = 'ATS'
+        self.LetsGetContinue()
 
 
 
-    def LetsGetContinue(self,touch):
+    def LetsGetContinue(self,*args, **kwargs):
         if self.SM_TM.children[0].id == 'scndw':
             print('sosi2')
             strat = CommandInputed(self.inputingprocess)
@@ -365,7 +372,10 @@ class Timer_widget(FloatLayout,I_Button):
 
     @mainthread
     def remove_widget_for(self,inst):
-        self.remove_widget(inst)
+        self.Timer_ToolBar.remove_widget(inst)
+    @mainthread
+    def add_widget_for(self,inst):
+        self.Timer_ToolBar.add_widget(inst)
 
     @mainthread
     def update_screen_to(self,screenname):
@@ -380,6 +390,7 @@ class Timer_widget(FloatLayout,I_Button):
     def second_thread(self,l_text):
 
         # try:
+
             self.touchedS = False
             self.touchedP = False
             # print(self.TimerSession.count)
@@ -396,12 +407,13 @@ class Timer_widget(FloatLayout,I_Button):
                     break
                 self.update_label_text(str(self.TimerSession.count//60)+":"+str(self.TimerSession.count%60))
                 if self.TimerSession.count<=0 :
+                    print('sdds')
                     self.my_call_thread=threading.Thread(target=self.new_call_thread)
                     self.my_call_thread.start()
                     # self.TimerSession.doAlarmTM()
                     self.valueminutes=None
                     self.valueseconds=None
-                    # self.update_screen_to('STS')
+                    self.update_screen_to('CTS')
                     break
                     
                 time.sleep(1)
@@ -409,15 +421,30 @@ class Timer_widget(FloatLayout,I_Button):
         #     self.SM_TM.transition.direction = 'right'
         #     self.SM_TM.current = 'STS'
     def new_call_thread(self):
-        self.remove_widget_for(self.Timer_ToolBar)
+        print('sdadsdsdadsdddddddddddddd')
+        print(self.sound_loop[0].state)
         self.doAlarm()
-        if  self.touchedP==True:
-                    
-        if  self.touchedS==True:
-                    self.update_screen_to('STS')
-                    break
+        print(self.sound_loop[0].state)
+        self.audiobool=False
+        while True:
+            self.remove_widget_for(self.Button_Pause)
+            self.remove_widget_for(self.Button_Start)
+            self.remove_widget_for(self.Button_Stop)
+            
+            if  self.audiobool!=False:
+                self.add_widget_for(self.Button_Start)
+                self.add_widget_for(self.Button_Stop)
+                self.add_widget_for(self.Button_Pause)
+                self.sound_loop[0].stop()
+                break
+            time.sleep(1)
+        print('sosimoy')
+
+            
+    @mainthread
     def doAlarm(self):
         self.sound_loop[0].play()
+        
 
     def ImPassive(self,touch):
         pass

@@ -1,16 +1,10 @@
 import time
 from Time import Time
-import kivy
 from abc import ABCMeta, abstractmethod, abstractproperty, ABC
 from abstract_classes import I_input_getTime, I_Button
-from kivy.core.audio import SoundLoader
 	
 class Timer(Time):
-	def __init__(self,**kwargs): 
-		
-	def setTimer(self,minutes,seconds):
-		# print(minutes)
-		# print(seconds)
+	def setTimer(self,minutes,seconds):		# print(seconds)
 		self.x= minutes*60 + seconds
 		
 		self.timertime = self.x+self.getTime()
