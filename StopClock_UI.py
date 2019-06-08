@@ -1,44 +1,71 @@
-import kivy
-import time
-from kivy.app import App
-
 from StopClock import StopClock
-from Time import Time 
 
+import kivy
+import asyncio
+from kivy.app import App
+from kivy.lang import Builder
+from kivy.config import Config
+from kivy.uix.button import Button
 from kivy.clock import Clock
 from kivy.uix.label import Label
-from kivy.uix.button import Button
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.widget import Widget
+from kivy.uix.bubble import Bubble
+from kivy.uix.screenmanager import ScreenManager, Screen,WipeTransition,SlideTransition
 from kivy.uix.image import Image
+from kivy.graphics import (Color, Ellipse, Rectangle, Line,BorderImage)
+from kivy.uix.recycleview import RecycleView
+from kivy.uix.splitter import Splitter
+from kivy.uix.recycleview.views import RecycleDataViewBehavior
+from kivy.properties import BooleanProperty
+from kivy.uix.recycleboxlayout import RecycleBoxLayout
+from kivy.uix.behaviors import FocusBehavior
+from kivy.uix.recycleview.layout import LayoutSelectionBehavior
+from abc import ABCMeta, abstractmethod, abstractproperty, ABC
+from abstract_classes import I_input_getTime, I_Button
+from kivy.uix.popup import Popup
+from kivy.factory import Factory
+from kivy.animation import Animation
+from kivy.clock import Clock, mainthread
+from kivy.uix.gridlayout import GridLayout
+import threading
+import sys 
+import trace
+import time
+import types
+from Time import Time 
 
-
-from kivy.graphics import (Color, Ellipse, Rectangle, Line)
-from kivy.config import Config
 Config.set('graphics', 'width', 400)
 Config.set('graphics', 'height', 700)
 Config.set('graphics', 'resizable', 0)
 
+
+shouldRun = False
+
 class Clocker(Label):
-	"""docstring for Clocker"""
-	def __init__(self, **kwargs):
-		super(Clocker, self).__init__(**kwargs)
-		with self.canvas.before:
-			Color(0,1,0,1)
-			Line(circle= (200, 350, 60), width = 1.5)
+    """docstring for Clocker"""
+    def __init__(self, **kwargs):
+        super(Clocker, self).__init__(**kwargs)
+        with self.canvas.before:
+            Color(0,1,0,1)
+            Line(circle= (200, 350, 100), width = 1.5)
 
 
 class BigRoundDickovina(FloatLayout):
-	def __init__(self, **kwargs):
-		super(BigRoundDickovina, self).__init__(**kwargs)
-		pis = Clocker(text='00:00', pos_hint={'center_x':.5, 'center_y':.5})
-		self.add_widget(pis)
-		
+    def __init__(self, **kwargs):
+        super(BigRoundDickovina, self).__init__(**kwargs)
+        self.pis = Clocker(text=' ', pos_hint={'center_x':.5, 'center_y':.5})
+        self.add_widget(self.pis)
+        
       
-
-		
+class Act_Time_Screen(FloatLayout):
+    def __init__(self, **kwargs):
+        super(Act_Time_Screen, self).__init__(**kwargs)
+        self.SCWindow=SCWindow=BigRoundDickovina()
+        self.add_widget(SCWindow)
+        
 
 
 class SC_Lables(AnchorLayout):
@@ -73,26 +100,115 @@ class SC_Lables(AnchorLayout):
 
 
 class StopClockWidget(FloatLayout):
-	def __init__(self, **kwargs):
-		super(StopClockWidget, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super(StopClockWidget, self).__init__(**kwargs)
+        
+        SC_Body=FloatLayout(pos_hint={'center_x':0.5,'y':0})
 
-		self.play = play = SC_Lables(size_hint=(.15,.1), pos_hint={'x':0, 'y':0})
-		# play.btn1.bind(on_release = pass)
-		play.img1.source = "icons8-circled-play-filled-90.png"
-		self.pause = pause = SC_Lables(size_hint=(.15,.1), pos_hint={'x':.2, 'y':0})
 
-		pause.img1.source = "icons8-pause-button-filled-96.png"
-		self.circle = circle = BigRoundDickovina(pos_hint={'center_x':.5, 'center_y':.5})
-		self.add_widget(play)
-		self.add_widget(pause)
-		self.add_widget(circle)
+        Button_Start= SC_Lables(size_hint=[1/5.5,1],pos_hint={'x': 0.1, 'y': 0})
+        Button_Start.img1.source='icons8-circled-play-filled-90.png'
+        Button_Start.btn1.bind(on_release=self.LetsGetStart)
 
-	
+        Button_Pause= SC_Lables(size_hint=[1/5.5,1],pos_hint={'center_x': .5, 'y': 0})
+        Button_Pause.img1.source='icons8-pause-button-filled-96.png'
+        Button_Pause.btn1.bind(on_release=self.LetsGetPause)
 
+        Button_Stop= SC_Lables(size_hint=[1/5.5,1],pos_hint={'right': 0.9, 'y': 0})
+        Button_Stop.img1.source='icons8-no-96.png'
+        Button_Stop.btn1.bind(on_release=self.LetsGetStop)
+
+
+        self.SCSession= SCSession = StopClock() 
+      
+
+        self.circle = circle = Act_Time_Screen()
+        
+
+        SC_ToolBar=FloatLayout(size_hint=(.9,.1),pos_hint={'center_x':0.5,'y':0})
+        SC_ToolBar.add_widget(Button_Start)
+        SC_ToolBar.add_widget(Button_Pause)
+        SC_ToolBar.add_widget(Button_Stop)
+
+
+
+        SC_Body.add_widget(circle)
+        SC_Body.add_widget(SC_ToolBar)
+
+        self.add_widget(SC_Body)
+    def LetsGetStart(self, touch):
+        global shouldRun
+        shouldRun = True
+        self.my_thread=threading.Thread(target=self.second_thread, args=(self.circle.SCWindow.pis.text,))
+        self.my_thread.start()
+
+
+    def LetsGetPause(self,touch):
+        pass
+
+    def LetsGetStop(self, touch):
+        global shouldRun
+        shouldRun = False
+
+    @mainthread
+    def update_label_text(self,new_text):
+        global shouldRun
+        if shouldRun:
+            self.circle.SCWindow.pis.text=new_text
+            print("chlen")
+        else: 
+            pass
+
+    def second_thread(self,l_text):
+            global shouldRun
+        # try:
+            # self.update_label_text(str(int(self.SCSession.count))+":"+str(self.SCSession.count%60))
+            # self.SCSession.startSC()
+            # self.update_label_text(str(round(self.SCSession.count%60, 3)))
+            # time.sleep(0.1)
+            while shouldRun:
+                self.SCSession.startSC()
+                self.update_label_text(str(int(self.SCSession.count//60))+":"+str(round(self.SCSession.count%60, 1)))
+                print(str(int(self.SCSession.count)))
+                time.sleep(0.1)
+                
+
+    def inputingprocess(self,mint,sec):
+        try:
+            if (mint == None):
+                raise NoargError(mint)
+            if (sec == None) :
+                raise NoargError(sec)
+            
+        except NoargError as e:
+            e.popupsi.open()
+            stratNone= ICommand()
+            return stratNone.execute()
+        
+        else:
+            pass
+
+class ICommand:
+    def __init__(self, func = None):
+        self.__func = func
+
+    def execute(self, *args, **kwargs):
+        pass
+
+class CommandInputed(ICommand):
+    def __init__(self, func = None):
+        super(CommandInputed, self).__init__(func)
+        self.__func=func
+
+    def execute(self,this, *args, **kwargs):
+        # inputingprocess(self.valueminutes,self.valueseconds)
+        if self.__func:
+            return self.__func(*args, **kwargs)
+        return None
 
 class MainApp(App):
-	def build(self):
-		return StopClockWidget()
+    def build(self):
+        return StopClockWidget()
 
 
 if __name__ == '__main__':

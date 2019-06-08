@@ -12,20 +12,9 @@ class NewPrint(Exception):
 class StopClock(Time):
 
 
-	def startSC(self, count):
-
-		while True:
-			count = time.time()-self.getClockTime() 
-			time.sleep(1)
-			print("%.1f" % count)
-			try:
-				if count>=float(4):
-					print('sasat')
-					raise NewPrint(0)
-			except NewPrint as npr:
-				self.startSC(npr.value)
-				print('dodo')
-			
+	def startSC(self, *args, **kwargs):
+			self.count = time.time()-self.getClockTime() 
+		
 
 			# if self.pauseSC():
 			# 	print(count)
@@ -49,7 +38,3 @@ class StopClock(Time):
 		return True
 
 
-
-dd = StopClock()
-dd.startSC(0)
-time.sleep(1)
