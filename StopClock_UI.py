@@ -49,14 +49,14 @@ class Clocker(Label):
     def __init__(self, **kwargs):
         super(Clocker, self).__init__(**kwargs)
         with self.canvas.before:
-            Color(0,1,0,1)
+            Color(0,1,1,1)
             Line(circle= (200, 350, 100), width = 1.5)
 
 
 class BigRoundDickovina(FloatLayout):
     def __init__(self, **kwargs):
         super(BigRoundDickovina, self).__init__(**kwargs)
-        self.pis = Clocker(text=' ', pos_hint={'center_x':.5, 'center_y':.5})
+        self.pis = Clocker(text=' ', pos_hint={'center_x':.5, 'center_y':.5}, font_size = 50, color=(0,1,1,1))
         self.add_widget(self.pis)
         
       
