@@ -64,23 +64,20 @@ Builder.load_string('''
         Rectangle:
             pos: self.pos
             size: self.size
-<RV>:
-    viewclass: 'SelectableLabel'
-    SelectableRecycleBoxLayout:
-        default_size: None, dp(56)
-        default_size_hint: .95, None
-        size_hint_y: None
-        height: self.minimum_height
-        orientation: 'vertical'
+# <RV>:
+#     viewclass: 'SelectableLabel'
+#     SelectableRecycleBoxLayout:
+#         default_size: None, dp(56)
+#         default_size_hint: .95, None
+#         size_hint_y: None
+#         height: self.minimum_height
+#         orientation: 'vertical'
         # multiselect: True
         # touch_multiselect: True
 ''')
 
 
 
-Config.set('graphics', 'width', 400)
-Config.set('graphics', 'height', 700)
-Config.set('graphics', 'resizable', 0)
 
 
 class SelectableRecycleBoxLayout(FocusBehavior, LayoutSelectionBehavior,RecycleBoxLayout):
@@ -169,12 +166,12 @@ class Set_Time_Screen(Screen):
         self.darou=darou=SetTimeTM_body(size_hint=(1,1),pos_hint={'center_x':0.5,'center_y':0.5},padding =[0,0,0,0])
 
         
-        self.scroller=ScrollView(size_hint=((1,1)))
+        # self.scroller=ScrollView(size_hint=((1,1)))
         self.add_widget(darou)
         
-class Act_Time_Screen(Screen):
+# class Act_Time_Screen(Screen):
 
-        self.add_widget(darou)
+#         self.add_widget(darou)
 
 # class Act_Time_Screen(Screen):
 #     def __init__(self, **kwargs):
@@ -271,10 +268,10 @@ class AlarmLables(AnchorLayout):
         
 
 
-class Alarm_widget(FloatLayout,I_Button):
+class SetAlarm_widget(Screen,I_Button):
     # stop = threading.Event()
     def __init__(self, **kwargs):
-        super(Alarm_widget, self).__init__(**kwargs)
+        super(SetAlarm_widget, self).__init__(**kwargs)
         self.Alarm_Body=Alarm_Body=FloatLayout(pos_hint={'center_x':0.5,'y':0})
         self.SM_TM = SM_TM  =ScreenManager(size_hint=[1,.8],pos_hint={'center_x':0.5,'top':1})
         self.frst=frst=Set_Time_Screen(name='STS',id='firstw')
@@ -289,9 +286,7 @@ class Alarm_widget(FloatLayout,I_Button):
         # self.SM_TM.add_widget(thd)
         self.AlarmSession= AlarmSession = Alarm()
 
-        self.Button_Start=Button_Start= AlarmLables(size_hint=[1.5/5.5,1.5],pos_hint={'x': 0.35, 'y': 0.1})
-        Button_Start.img1.source='icons8-circled-play-filled-90.png'
-        Button_Start.btn1.bind(on_release=self.LetsGetStart)
+        
 
         # self.Button_Pause=Button_Pause= AlarmLables(size_hint=[1/5.5,1],pos_hint={'center_x': .5, 'y': 0})
         # Button_Pause.img1.source='icons8-pause-button-filled-96.png'
@@ -305,7 +300,7 @@ class Alarm_widget(FloatLayout,I_Button):
 
 
         self.Alarm_ToolBar=Alarm_ToolBar=FloatLayout(size_hint=(.9,.1),pos_hint={'center_x':0.5,'y':0})
-        Alarm_ToolBar.add_widget(Button_Start)
+        
         # Alarm_ToolBar.add_widget(Button_Pause)
         # Alarm_ToolBar.add_widget(Button_Stop)
 
@@ -364,8 +359,8 @@ class Alarm_widget(FloatLayout,I_Button):
         #     print('sosi1')
 
             # print(self.valueminutes)
-            strat = CommandInputed(self.inputingprocess)
-            strat.execute(self, self.valueminutes, self.valueseconds)
+            # strat = CommandInputed(self.inputingprocess)
+            # strat.execute(self, self.valueminutes, self.valueseconds)
             try:
                 if (self.valueminutes == None):
                     raise NoargError(self.valueminutes)
@@ -373,10 +368,10 @@ class Alarm_widget(FloatLayout,I_Button):
                     raise NoargError(self.valueseconds)
             except NoargError:
                 pass
-            # else:
-            #     self.inputingprocess(self.valueminutes,self.valueseconds)
-                # self.SM_TM.transition.direction = 'left'
-                # self.SM_TM.current = 'ATS'
+            else:
+                self.inputingprocess(self.valueminutes,self.valueseconds)
+                self.parent.transition.direction = 'left'
+                self.parent.current = 'AMW'
                 # self.my_thread=threading.Thread(target=self.second_thread, args=(self.SM_TM.children[0].TMWindow.TM_TC_Label.text,))
                 # self.my_thread.start()
             
@@ -541,11 +536,5 @@ class NoargError(Exception):
         self.value = value
         self.popupsi=Popup(title='Unexpected/uninputed value',content=Label(text="\nHi,maybe you entered the wrong value\n or forgot to enter it at all\n,lets see what you entered:\n You entered:{0} but this value changed to 0".format(value)),size_hint=(1, .9))
         
-class MainApp(App):
-    def build(self):
-        return Alarm_widget()
 
 
-
-if __name__ == '__main__':
-    MainApp().run()

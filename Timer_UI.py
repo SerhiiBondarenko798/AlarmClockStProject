@@ -64,14 +64,14 @@ Builder.load_string('''
         Rectangle:
             pos: self.pos
             size: self.size
-<RV>:
-    viewclass: 'SelectableLabel'
-    SelectableRecycleBoxLayout:
-        default_size: None, dp(56)
-        default_size_hint: .95, None
-        size_hint_y: None
-        height: self.minimum_height
-        orientation: 'vertical'
+# <RV>:
+#     viewclass: 'SelectableLabel'
+#     SelectableRecycleBoxLayout:
+#         default_size: None, dp(56)
+#         default_size_hint: .95, None
+#         size_hint_y: None
+#         height: self.minimum_height
+#         orientation: 'vertical'
         # multiselect: True
         # touch_multiselect: True
 ''')
@@ -521,11 +521,11 @@ class NoargError(Exception):
         self.value = value
         self.popupsi=Popup(title='Unexpected/uninputed value',content=Label(text="\nHi,maybe you entered the wrong value\n or forgot to enter it at all\n,lets see what you entered:\n You entered:{0} but this value changed to 0".format(value)),size_hint=(1, .9))
         
-class MainApp(App):
-	def build(self):
-		return Timer_widget()
+# class MainApp(App):
+# 	def build(self):
+# 		return Timer_widget()
 
 
 
-if __name__ == '__main__':
-    MainApp().run()
+# if __name__ == '__main__':
+#     MainApp().run()

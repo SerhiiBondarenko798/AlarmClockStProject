@@ -203,10 +203,10 @@ class CommandInputed(ICommand):
             return self.__func(*args, **kwargs)
         return None
 
-class MainApp(App):
-    def build(self):
-        return StopClockWidget()
+# class MainApp(App):
+#     def build(self):
+#         return StopClockWidget()
 
 
-if __name__ == '__main__':
-    MainApp().run()
+# if __name__ == '__main__':
+#     MainApp().run()

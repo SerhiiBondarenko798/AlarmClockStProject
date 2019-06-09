@@ -1,0 +1,35 @@
+<AlarmClockLab>:
+    font_size: 50
+    color: (0, 1, 1, 1)
+    canvas:
+        
+        Color: 
+            rgba:(0, 1, 1, 1)#<-----------------Место для функции смены цвета бэка тамербара
+        Line:
+            circle: (self.center_x,self.center_y,100)
+            width: 1.5
+
+<SetTimeTM_body>:
+    canvas.before:
+        Color:
+            rgba:(0, 1, 1, 1)
+        
+
+<SelectableLabel>:
+    
+    font_size: 50
+    color: (.1,.1,.1,1) if self.selected else (0,1,1,1)
+    canvas.before:
+        Color:
+            rgba: (0,1,1,1) if self.selected else (0, 0, 0, 0)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+<RV>:
+    viewclass: 'SelectableLabel'
+    SelectableRecycleBoxLayout:
+        default_size: None, dp(56)
+        default_size_hint: .95, None
+        size_hint_y: None
+        height: self.minimum_height
+        orientation: 'vertical'

@@ -1,1 +1,5 @@
-alarm ¹1:04:05
+alarm ¹1:02:01
+alarm ¹2:00:03
+alarm ¹3:00:05
+alarm ¹4:01:04
+alarm ¹5:00:06

@@ -1,4 +1,4 @@
-import kivy
+
 import sys
 from Time import Time 
 
@@ -8,13 +8,25 @@ class Alarm(Time):
 
 	def SetAlarm(self, minutes, seconds):
 
-		f=open("alarms.txt", "a+")
+		f=open("alarms.txt", "r")
 		
 		# try:
 		# 	index=int(f.read(0))+1
 		# except ValueError:
-		# 	index = 1
-		index = self.ReadAlarm()+1
+		index = 0
+		
+		for line in f:
+			try: 
+				index = int(self.ReadAlarm(line))
+				print("index"+str(index))
+			except IndexError:
+								
+				break
+		f.close()
+		index = index+1
+		print("index"+str(index))
+		f=open("alarms.txt", "a+")
+
 
 		try:
 			if (minutes<=9) & (seconds<=9):
@@ -33,17 +45,46 @@ class Alarm(Time):
 			f.close()
 			print("I closed a file")
 
-	def ReadAlarm(self):
-		f=open("alarms.txt", "a+")
-		i=0
-		for line in f: 
-			line 
-			i=i+1
+	def ReadAlarm(self,line):
+		# try:
+		# 	# f=open("alarms.txt", "r")
+		# except:
+		# 	print("no")
+		# else:
+			
+			# line=f.readline()
+			
+			i=line[7]
+			print(i)
+			# f.close()
+			return i
+	def ReadMinutes(self,line):
+		# try:
+		# 	f=open("alarms.txt", "r")
+		# except:
+		# 	print("no")
+		# else:
+			# line=f.readline()
+			mun=line[9:11]
+			print (mun)
+			# f.close()
+			return mun
+			
+			
+			
+	def ReadSeconds(self,line):
+		# try:
+		# 	f=open("alarms.txt", "r")
+		# except:
+		# 	print("no")
+		# else:
+			# line=f.readline()
+			sec=line[12:14]
+			print (sec)
+			# f.close()
+			return sec
+			
+			
+					
 
-		
-		print(i)
-		f.close()
-		return i
 
-
-Alarm().ReadAlarm()
