@@ -436,6 +436,7 @@ class Timer_widget(FloatLayout,I_Button):
                 self.add_widget_for(self.Button_Stop)
                 self.add_widget_for(self.Button_Pause)
                 self.sound_loop[0].stop()
+                self.sound_loop[0] = SoundLoader.load(self.sound_inst_loop[0])
                 break
             time.sleep(1)
         print('sosimoy')
@@ -444,6 +445,7 @@ class Timer_widget(FloatLayout,I_Button):
     @mainthread
     def doAlarm(self):
         self.sound_loop[0].play()
+
         
 
     def ImPassive(self,touch):

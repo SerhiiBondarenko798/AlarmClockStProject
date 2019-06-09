@@ -25,7 +25,7 @@ class AppBody(BoxLayout):
 	def __init__(self, **kwargs):
 		super(AppBody, self).__init__(**kwargs)
 		with self.canvas.before:
-			self.rect = Rectangle(size=self.size, pos=self.pos, source='chertov.jpg') #<-----------------Место для функции смены бэка
+			self.rect = Rectangle(size=self.size, pos=self.pos, source='wallpaper.jpg') #<-----------------Место для функции смены бэка
 			self.bind(size=self._update_rect, pos=self._update_rect)
 	def _update_rect(self, instance, value):
 		self.rect.pos = instance.pos

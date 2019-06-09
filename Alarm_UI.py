@@ -152,12 +152,10 @@ class Set_Time_Screen(Screen):
     def __init__(self, **kwargs):
         super(Set_Time_Screen, self).__init__(**kwargs)
         self.darou=darou=SetTimeTM_body(size_hint=(1,1),pos_hint={'center_x':0.5,'center_y':0.5},padding =[0,0,0,0])
-        self.selectspecial=FeachBar(orientation='horisontal',size_hint=(1,1))
+        
         self.scroller=ScrollView(size_hint=((1,1)))
         self.add_widget(darou)
-        self.add_widget(selectspecial)
-        self.add_widget()
-
+        
 class Act_Time_Screen(Screen):
     def __init__(self, **kwargs):
         super(Act_Time_Screen, self).__init__(**kwargs)
