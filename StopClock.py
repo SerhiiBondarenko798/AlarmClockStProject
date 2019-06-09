@@ -12,10 +12,10 @@ class NewPrint(Exception):
 class StopClock(Time):
 
 
-	def startSC(self, count = 0):
-			self.count = count+(time.time()-self.getClockTime())
+	def startSC(self,seconds):
+		self.count = (seconds+time.time())-self.getClockTime()
 		
-			
+
 			# if self.pauseSC():
 			# 	print(count)
 			# 	while True:
@@ -26,15 +26,16 @@ class StopClock(Time):
 			# if self.endSC(count): #тут будет условие нажатия кнопки, а сейчас может выдавать ошибку ибо функция endSC не написана
 			# 	break
 			
-
+			
 	def pauseSC(self):
-		return True
+		self.clocktime =time.time()
 
 	def endSC(self,count):
-		count = 0
+		self.count = 0
 		return True
 
 	def continueSC(self):
+		self.clocktime =time.time()
 		return True
 
 

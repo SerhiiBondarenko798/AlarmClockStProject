@@ -104,7 +104,7 @@ class StopClockWidget(FloatLayout):
         super(StopClockWidget, self).__init__(**kwargs)
         
         SC_Body=FloatLayout(pos_hint={'center_x':0.5,'y':0})
-
+        self.SCSession= SCSession = StopClock() 
 
         self.Button_Start= Button_Start= SC_Lables(size_hint=[1/5.5,1],pos_hint={'x': 0.1, 'y': 0})
         Button_Start.img1.source='icons8-circled-play-filled-90.png'
@@ -116,10 +116,12 @@ class StopClockWidget(FloatLayout):
 
         Button_Stop= SC_Lables(size_hint=[1/5.5,1],pos_hint={'right': 0.9, 'y': 0})
         Button_Stop.img1.source='icons8-no-96.png'
+
         Button_Stop.btn1.bind(on_release=self.LetsGetStop)
+        
 
 
-        self.SCSession= SCSession = StopClock() 
+       
       
 
         self.circle = circle = Act_Time_Screen()
@@ -139,25 +141,29 @@ class StopClockWidget(FloatLayout):
     def LetsGetStart(self, touch):
         global shouldRun
         shouldRun = True
-        self.my_thread=threading.Thread(target=self.second_thread, args=(self.circle.SCWindow.pis.text,))
+        self.my_thread=threading.Thread(target=self.second_thread, args=(self.circle.SCWindow.pis.text,self.SCSession.count))
         self.my_thread.start()
 
 
     def LetsGetPause(self,touch):
         global shouldRun
         shouldRun = False
-        self.count = self.SCSession.count
-        print("my time"+str(self.count))
+        print("my time"+str(self.SCSession.count))
         
         self.Button_Start.btn1.bind(on_release=self.LetsGetContinue)
     def LetsGetContinue(self, touch):
         global shouldRun
+        self.SCSession.pauseSC()
+
         shouldRun = True
-        self.my_thread=threading.Thread(target=self.second_thread, args=(self.circle.SCWindow.pis.text,))
-        self.my_thread.start()
-        print ("continue")
+        
     def LetsGetStop(self, touch):
-        pass
+        global shouldRun
+        shouldRun = False
+        self.SCSession.pauseSC()
+        self.SCSession.endSC(self.SCSession.count)
+        self.update_label_text("0:0.0")
+        print ("ended")
 
 
 
@@ -166,15 +172,15 @@ class StopClockWidget(FloatLayout):
         self.circle.SCWindow.pis.text=new_text
        
 
-    def second_thread(self,l_text):
+    def second_thread(self,l_text, seconds,*args,**kwargs):
             global shouldRun
     
             while self.SCSession.count>=0:
                 if shouldRun == False:
-                    self.SCSession.pauseSC()
+                    
                     print("vse")
                     break
-                self.SCSession.startSC()
+                self.SCSession.startSC(seconds)
                 self.update_label_text(str(int(self.SCSession.count//60))+":"+str(round(self.SCSession.count%60, 1)))
                 print(str(int(self.SCSession.count)))
                 time.sleep(0.1)  
