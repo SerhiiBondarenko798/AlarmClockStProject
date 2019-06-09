@@ -167,6 +167,13 @@ class Set_Time_Screen(Screen):
     def __init__(self, **kwargs):
         super(Set_Time_Screen, self).__init__(**kwargs)
         self.darou=darou=SetTimeTM_body(size_hint=(1,1),pos_hint={'center_x':0.5,'center_y':0.5},padding =[0,0,0,0])
+
+        
+        self.scroller=ScrollView(size_hint=((1,1)))
+        self.add_widget(darou)
+        
+class Act_Time_Screen(Screen):
+
         self.add_widget(darou)
 
 # class Act_Time_Screen(Screen):
@@ -196,6 +203,7 @@ class Set_Time_Screen(Screen):
 #         with self.canvas.before:
 #             Color(0, 1, 1, 1) 
 class CallButt(AnchorLayout):
+
 
     def __init__(self, **kwargs):
         super(CallButt, self).__init__(**kwargs)
