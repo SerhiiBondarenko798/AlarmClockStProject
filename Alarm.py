@@ -14,17 +14,17 @@ class Alarm(Time):
 		# 	index=int(f.read(0))+1
 		# except ValueError:
 		# 	index = 1
-		
+		index = self.ReadAlarm()+1
 
 		try:
 			if (minutes<=9) & (seconds<=9):
-				f.write("number:0"+str(int(minutes))+":0"+str(int(seconds))+"\n")
+				f.write("alarm №"+str(index)+":0"+str(int(minutes))+":0"+str(int(seconds))+"\n")
 			elif minutes<=9:
-				f.write("number:0"+str(int(minutes))+":"+str(int(seconds))+"\n")
+				f.write("alarm №"+str(index)+":0"+str(int(minutes))+":"+str(int(seconds))+"\n")
 			elif seconds<=9:
-				f.write("number:"+str(int(minutes))+":0"+str(int(seconds))+"\n")
+				f.write("alarm №"+str(index)+":"+str(int(minutes))+":0"+str(int(seconds))+"\n")
 			else:
-				f.write("number:"+str(int(minutes))+":"+str(int(seconds))+"\n")
+				f.write("alarm №"+str(index)+":"+str(int(minutes))+":"+str(int(seconds))+"\n")
 		except:
 			print("Record unsuccesful")
 		else:
@@ -34,7 +34,7 @@ class Alarm(Time):
 			print("I closed a file")
 
 	def ReadAlarm(self):
-		f=open("alarms.txt", "r")
+		f=open("alarms.txt", "a+")
 		i=0
 		for line in f: 
 			line 
@@ -43,5 +43,7 @@ class Alarm(Time):
 		
 		print(i)
 		f.close()
+		return i
+
 
 Alarm().ReadAlarm()

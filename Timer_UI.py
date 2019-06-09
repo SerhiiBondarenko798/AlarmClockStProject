@@ -330,7 +330,7 @@ class Timer_widget(FloatLayout,I_Button):
 
     def LetsGetContinue(self,*args, **kwargs):
         if self.SM_TM.children[0].id == 'scndw':
-            print('sosi2')
+           
             strat = CommandInputed(self.inputingprocess)
             strat.execute(self, self.valueminutes, self.valueseconds)
             self.Timer_ToolBar.add_widget(self.Button_Pause)
@@ -338,7 +338,7 @@ class Timer_widget(FloatLayout,I_Button):
             self.my_thread.start()
     def LetsGetStart(self, touch):
         if self.SM_TM.children[0].id == 'firstw':
-            print('sosi1')
+           
             # print(self.valueminutes)
             strat = CommandInputed(self.inputingprocess)
             strat.execute(self, self.valueminutes, self.valueseconds)
@@ -407,7 +407,7 @@ class Timer_widget(FloatLayout,I_Button):
                     break
                 self.update_label_text(str(self.TimerSession.count//60)+":"+str(self.TimerSession.count%60))
                 if self.TimerSession.count<=0 :
-                    print('sdds')
+                  
                     self.my_call_thread=threading.Thread(target=self.new_call_thread)
                     self.my_call_thread.start()
                     # self.TimerSession.doAlarmTM()
@@ -421,10 +421,9 @@ class Timer_widget(FloatLayout,I_Button):
         #     self.SM_TM.transition.direction = 'right'
         #     self.SM_TM.current = 'STS'
     def new_call_thread(self):
-        print('sdadsdsdadsdddddddddddddd')
-        print(self.sound_loop[0].state)
+        print(self.sound_loop[2].state)
         self.doAlarm()
-        print(self.sound_loop[0].state)
+        print(self.sound_loop[2].state)
         self.audiobool=False
         while True:
             self.remove_widget_for(self.Button_Pause)
@@ -435,15 +434,16 @@ class Timer_widget(FloatLayout,I_Button):
                 self.add_widget_for(self.Button_Start)
                 self.add_widget_for(self.Button_Stop)
                 self.add_widget_for(self.Button_Pause)
-                self.sound_loop[0].stop()
+                self.sound_loop[2].stop()
+                self.sound_loop[2]=SoundLoader.load(self.sound_inst_loop[2])
                 break
             time.sleep(1)
-        print('sosimoy')
+        
 
             
     @mainthread
     def doAlarm(self):
-        self.sound_loop[0].play()
+        self.sound_loop[2].play()
         
 
     def ImPassive(self,touch):

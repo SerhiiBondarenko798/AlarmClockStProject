@@ -1,3 +1,1 @@
-number:03:06
-number:08:02
-number:05:02
+alarm ¹1:04:05
